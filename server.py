@@ -13,22 +13,22 @@ PORT = 8000
 
 HAZARDOUS_TYPES = {"solvent", "oil"}
 FILL_SPEEDS = {
-    "solvent": 1.6,
-    "oil": 1.4,
-    "metal": 1.2,
-    "plastic": 1.5,
-    "cardboard": 1.7,
-    "organic": 1.8,
-    "mixed": 1.3,
+    "metal": 0.8,
+    "oil": 0.7,
+    "solvent": 0.6,
+    "plastic": 1.1,
+    "cardboard": 1.2,
+    "organic": 1.5,
+    "mixed": 1.0,
 }
 CO2_FACTORS = {
-    "metal": 1.8,
+    "metal": 2.1,
+    "oil": 1.8,
+    "solvent": 1.6,
     "plastic": 1.5,
-    "cardboard": 1.1,
-    "oil": 1.2,
-    "solvent": 1.4,
-    "organic": 0.6,
-    "mixed": 0.1,
+    "cardboard": 1.2,
+    "organic": 0.5,
+    "mixed": 0.0,
 }
 
 db_lock = threading.Lock()

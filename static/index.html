@@ -77,6 +77,7 @@
     .mono {
       font-family: "JetBrains Mono", monospace;
       font-variant-numeric: tabular-nums;
+      white-space: nowrap;
     }
 
     .tabular {
@@ -357,6 +358,8 @@
       font-weight: 700;
       letter-spacing: -0.02em;
       margin: 6px 0 4px;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
     }
 
     .kpi-card.emerald .kpi-value { color: var(--emerald); }
@@ -574,6 +577,7 @@
       justify-content: space-between;
       align-items: baseline;
       gap: 6px;
+      white-space: nowrap;
     }
 
     .bin-pct {
@@ -910,16 +914,16 @@
   <main class="container">
     <section class="demo-drawer" id="demoDrawer">
       <div class="panel-head" style="margin-bottom:4px;">
-        <div class="panel-title">2-Minute Judge Demo Walkthrough</div>
+        <div class="panel-title">2-Minute Live Evaluator Demonstration Script</div>
         <button class="btn" id="closeGuideBtn">Hide</button>
       </div>
       <div class="demo-steps">
-        <div class="demo-step"><strong>1. Overview</strong>Show 6 factories, 11 bins, diversion rate, and CO2e estimates.</div>
-        <div class="demo-step"><strong>2. Dump Waste</strong>Click "+25% Dump" on a bin to add waste and test auto-pickup at ≥80%.</div>
-        <div class="demo-step"><strong>3. Reuse Transfer</strong>Click "Transfer to Reuse" to route one factory's waste to a neighbor that wants it.</div>
-        <div class="demo-step"><strong>4. Priority Queue</strong>Show hazardous waste (solvent, oil) pinned at top, then oldest.</div>
-        <div class="demo-step"><strong>5. Collect / Partial</strong>Complete a pickup (100%) or remove partial (-25%) into compliance log.</div>
-        <div class="demo-step"><strong>6. Role Sign-Up</strong>Switch/sign up a Tenant, Collector, or Park Manager for judges.</div>
+        <div class="demo-step"><strong>1. Live Overview</strong>Present the 6 factories and 11 bins streaming telemetry every 3s alongside top-level KPIs.</div>
+        <div class="demo-step"><strong>2. Trigger Alert</strong>Click "+25% Dump Waste" on a solvent bin until it crosses ≥ 80%, triggering autonomous dispatch.</div>
+        <div class="demo-step"><strong>3. Hazardous Priority</strong>Observe the solvent pickup automatically jump to the very top as "P1 HAZARDOUS".</div>
+        <div class="demo-step"><strong>4. Collect & Audit</strong>Click "Mark Collected": bin resets to 0% and immutable weight record enters compliance ledger.</div>
+        <div class="demo-step"><strong>5. Symbiosis Match & Transfer</strong>Inspect Reuse Board showing cross-factory circular fulfillment and execute reuse transfer.</div>
+        <div class="demo-step"><strong>6. Impact Close</strong>Highlight updated Landfill Diversion Rate (87%+) and estimated CO₂e emissions avoided.</div>
       </div>
     </section>
 
@@ -1063,12 +1067,12 @@
   <script>
     const HAZARDOUS = new Set(["solvent", "oil"]);
     const CO2_FACTORS = {
-      metal: 1.8, plastic: 1.5, cardboard: 1.1,
-      oil: 1.2, solvent: 1.4, organic: 0.6, mixed: 0.1
+      metal: 2.1, oil: 1.8, solvent: 1.6,
+      plastic: 1.5, cardboard: 1.2, organic: 0.5, mixed: 0.0
     };
     const FILL_SPEEDS = {
-      solvent: 1.6, oil: 1.4, metal: 1.2, plastic: 1.5,
-      cardboard: 1.7, organic: 1.8, mixed: 1.3
+      metal: 0.8, oil: 0.7, solvent: 0.6,
+      plastic: 1.1, cardboard: 1.2, organic: 1.5, mixed: 1.0
     };
 
     const STORAGE_KEY = "loopyard_standalone_v2";
@@ -1620,7 +1624,7 @@
 
       tbody.innerHTML = list.map((p) => `
         <tr class="${p.is_hazardous ? "haz-row" : ""}">
-          <td><span class="${p.is_hazardous ? "prio-p1" : "prio-p2"}"><span class="prio-dot"></span>${p.is_hazardous ? "P1 HAZ" : "P2 STD"}</span></td>
+          <td><span class="${p.is_hazardous ? "prio-p1" : "prio-p2"}"><span class="prio-dot"></span>${p.is_hazardous ? "P1 HAZARDOUS" : "P2 STANDARD"}</span></td>
           <td class="mono">#PK-${p.id}</td>
           <td><strong>${p.tenant_name}</strong> <span class="panel-meta">· ${p.bin_label}</span></td>
           <td><span class="w-tag w-${p.waste_type}">${p.waste_type}</span></td>
@@ -1631,6 +1635,7 @@
             <div class="action-group">
               <button class="btn btn-primary" onclick="onCompletePickup(${p.id})">Mark Collected</button>
               <button class="btn btn-soft-emerald" onclick="onPartialPickup(${p.id}, 25)">-25%</button>
+              <button class="btn btn-soft-emerald" onclick="onPartialPickup(${p.id}, 50)">-50%</button>
             </div>
           </td>
         </tr>
