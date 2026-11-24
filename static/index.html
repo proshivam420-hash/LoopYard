@@ -373,7 +373,7 @@
     /* Main Workspace Grid */
     .workspace {
       display: grid;
-      grid-template-columns: minmax(0, 1.55fr) minmax(0, 1.15fr);
+      grid-template-columns: minmax(0, 1.45fr) minmax(0, 1.25fr);
       gap: 18px;
       align-items: start;
     }
@@ -441,6 +441,11 @@
     .table-wrap {
       width: 100%;
       overflow-x: auto;
+    }
+
+    .table-wrap.compact-scroll {
+      max-height: 285px;
+      overflow-y: auto;
     }
 
     table {
@@ -642,21 +647,22 @@
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
       align-items: center;
-      gap: 8px;
-      font-size: 12px;
+      gap: 7px;
+      font-size: 11.5px;
+      min-width: 0;
     }
 
     .party-box {
       background: var(--surface-subtle);
       border: 1px solid var(--border);
       border-radius: 6px;
-      padding: 6px 8px;
+      padding: 5px 7px;
       min-width: 0;
       overflow: hidden;
     }
 
     .party-role {
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.04em;
@@ -665,19 +671,19 @@
 
     .party-name {
       font-weight: 600;
-      font-size: 12px;
+      font-size: 11.5px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
     .flow-arrow {
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 700;
       color: var(--emerald);
       background: var(--emerald-soft);
       border: 1px solid var(--emerald-border);
-      padding: 3px 8px;
+      padding: 2px 7px;
       border-radius: 999px;
       white-space: nowrap;
       flex-shrink: 0;
@@ -688,6 +694,8 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
+      min-width: 0;
+      flex-wrap: nowrap;
     }
 
     .match-summary-group {
@@ -700,8 +708,10 @@
     }
 
     .match-desc {
-      font-size: 11.5px;
+      font-size: 11px;
       color: var(--text-muted);
+      flex: 1;
+      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -710,8 +720,14 @@
     .match-action-group {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .match-action-group .btn {
+      padding: 4px 7px;
+      font-size: 11px;
       white-space: nowrap;
     }
 
@@ -972,29 +988,6 @@
           </div>
           <div class="bins-grid" id="binsGrid"></div>
         </div>
-
-        <!-- Reuse & Compliance Transfer Log -->
-        <div class="panel" id="auditPanel">
-          <div class="panel-head">
-            <div class="panel-title" id="auditTitle">Reuse Transfers & Compliance Log <span class="panel-meta" id="auditCount">(0 Logged)</span></div>
-            <div class="panel-meta" id="auditSub">Certified environmental audit trail for regulatory filings & ESG reporting</div>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Time</th>
-                  <th>Source Factory</th>
-                  <th>Material & Bin</th>
-                  <th>Weight</th>
-                  <th>Reuse / Action Note</th>
-                </tr>
-              </thead>
-              <tbody id="auditBody"></tbody>
-            </table>
-          </div>
-        </div>
       </div>
 
       <div class="col-stack">
@@ -1008,6 +1001,29 @@
             Closed-loop industrial symbiosis: turns one factory's surplus bin dump (≥30% fill) into another factory's raw material input—cutting hauling costs, landfill waste, and new material extraction.
           </div>
           <div class="match-list" id="matchList"></div>
+        </div>
+
+        <!-- Reuse & Compliance Transfer Log -->
+        <div class="panel" id="auditPanel">
+          <div class="panel-head">
+            <div class="panel-title" id="auditTitle">Reuse Transfers & Compliance Log <span class="panel-meta" id="auditCount">(0 Logged)</span></div>
+            <div class="panel-meta" id="auditSub">Certified environmental audit trail for regulatory filings & ESG reporting</div>
+          </div>
+          <div class="table-wrap compact-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Time</th>
+                  <th>Factory</th>
+                  <th>Material</th>
+                  <th>Weight</th>
+                  <th>Action / Note</th>
+                </tr>
+              </thead>
+              <tbody id="auditBody"></tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Demo Users & Role Showcase -->
@@ -1684,6 +1700,8 @@
       }).join("");
     }
 
+    let showAllMatches = false;
+
     function renderMatches() {
       const toggleBtn = document.getElementById("matchScopeToggle");
       const isTenant = activeView === "tenant" && activeUser?.tenant_id;
@@ -1703,23 +1721,26 @@
         return;
       }
 
-      el.innerHTML = list.slice(0, 8).map((m) => {
+      const limit = showAllMatches ? list.length : 6;
+      const visible = list.slice(0, limit);
+
+      const cardsHtml = visible.map((m) => {
         const isInbound = isTenant && m.target_tenant_id === activeUser.tenant_id;
         const isOutbound = isTenant && m.source_tenant_id === activeUser.tenant_id;
 
         let badgeHtml = "";
         let primaryBtnText = "Transfer to Reuse";
         let secondaryBtnText = "-50%";
-        let descText = `${m.source_tenant} dump (${m.bin_label}, ${m.fill_pct.toFixed(0)}%) → ${m.target_tenant}`;
+        let descText = `${m.source_tenant} (${m.bin_label}, ${m.fill_pct.toFixed(0)}%) → ${m.target_tenant}`;
 
         if (isInbound) {
           badgeHtml = `<span class="symbiosis-type-badge badge-inbound">Inbound Feedstock Offer · Offsets Procurement</span>`;
           primaryBtnText = "Adopt for Reuse";
           secondaryBtnText = "Adopt 50%";
-          descText = `Neighbor ${m.source_tenant} has ${m.available_kg.toFixed(1)} kg ${m.waste_type} ready to offset your raw inputs`;
+          descText = `Neighbor ${m.source_tenant} (${m.waste_type}, ${m.available_kg.toFixed(0)} kg) → You`;
         } else if (isOutbound) {
           badgeHtml = `<span class="symbiosis-type-badge badge-outbound">Outbound Surplus Offer</span>`;
-          descText = `Your ${m.bin_label} (${m.waste_type}, ${m.fill_pct.toFixed(0)}%) matches ${m.target_tenant}'s needs`;
+          descText = `Your ${m.bin_label} (${m.waste_type}, ${m.fill_pct.toFixed(0)}%) → ${m.target_tenant}`;
         }
 
         return `
@@ -1749,7 +1770,25 @@
           </div>
         `;
       }).join("");
+
+      let moreHtml = "";
+      if (list.length > 6) {
+        moreHtml = `
+          <div style="text-align:center;margin-top:6px;">
+            <button class="btn" style="font-size:11px;padding:4px 10px;" onclick="window.onToggleMoreMatches()">
+              ${showAllMatches ? "Show Top 6 Only" : `+ View All Matches (${list.length})`}
+            </button>
+          </div>
+        `;
+      }
+
+      el.innerHTML = cardsHtml + moreHtml;
     }
+
+    window.onToggleMoreMatches = () => {
+      showAllMatches = !showAllMatches;
+      renderMatches();
+    };
 
     function renderAudit() {
       const tbody = document.getElementById("auditBody");
@@ -1766,14 +1805,14 @@
         return;
       }
 
-      tbody.innerHTML = logs.slice(0, 12).map((l) => `
+      tbody.innerHTML = logs.slice(0, 8).map((l) => `
         <tr>
           <td class="mono">#LOG-${l.id}</td>
           <td class="mono panel-meta">${(l.done_at || "").slice(11)}</td>
           <td><strong>${l.tenant_name}</strong></td>
           <td><span class="w-tag w-${l.waste_type}">${l.waste_type}</span> <span class="panel-meta">${l.bin_label}</span></td>
           <td class="mono"><strong>${l.kg_collected.toFixed(1)} kg</strong></td>
-          <td class="panel-meta">${l.note}</td>
+          <td class="panel-meta" style="max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${l.note}">${l.note}</td>
         </tr>
       `).join("");
     }
