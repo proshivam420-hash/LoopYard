@@ -1,1 +1,1 @@
-cd ~/Desktop/kunj && pbpaste > README.md
+cd ~/Desktop/kunj && pbpaste > README.md && git add README.md && git commit -m "Replace README with full LoopYard docs" && git push origin main
