@@ -21,7 +21,6 @@ FILL_SPEEDS = {
     "organic": 1.8,
     "mixed": 1.3,
 }
-# Rough average CO2e avoidance factors (kg CO2e per kg material) — prototype estimates
 CO2_FACTORS = {
     "metal": 1.8,
     "plastic": 1.5,
@@ -116,31 +115,30 @@ def init_db(reset=False):
 
             t_rows = {r["name"]: r["id"] for r in cur.execute("SELECT id, name FROM tenants")}
             bins_seed = [
-                ("Bin #1", t_rows["AutoParts Co"], "metal", 42.0, 500.0),
+                ("Bin #1", t_rows["AutoParts Co"], "metal", 46.0, 500.0),
                 ("Bin #2", t_rows["AutoParts Co"], "oil", 64.0, 200.0),
-                ("Bin #3", t_rows["SteelWorks Ltd"], "metal", 38.0, 1000.0),
+                ("Bin #3", t_rows["SteelWorks Ltd"], "metal", 42.0, 1000.0),
                 ("Bin #4", t_rows["SteelWorks Ltd"], "solvent", 74.0, 150.0),
                 ("Bin #5", t_rows["EcoPack Solutions"], "cardboard", 52.0, 400.0),
                 ("Bin #6", t_rows["EcoPack Solutions"], "mixed", 26.0, 300.0),
                 ("Bin #7", t_rows["ChemClean Refining"], "solvent", 78.0, 250.0),
                 ("Bin #8", t_rows["ChemClean Refining"], "oil", 44.0, 350.0),
                 ("Bin #9", t_rows["GreenAgro Organics"], "organic", 61.0, 600.0),
-                ("Bin #10", t_rows["GreenAgro Organics"], "cardboard", 34.0, 200.0),
-                ("Bin #11", t_rows["PolymerTech Industries"], "plastic", 48.0, 450.0),
+                ("Bin #10", t_rows["GreenAgro Organics"], "cardboard", 38.0, 200.0),
+                ("Bin #11", t_rows["PolymerTech Industries"], "plastic", 54.0, 450.0),
             ]
             cur.executemany(
                 "INSERT INTO bins (label, tenant_id, waste_type, fill_pct, capacity_kg) VALUES (?, ?, ?, ?, ?)",
                 bins_seed,
             )
 
-            # Seed initial completed compliance records so impact stats & audit trail are realistic from start
             b_rows = {r["label"]: r["id"] for r in cur.execute("SELECT id, label FROM bins")}
             initial_done = [
-                (b_rows["Bin #1"], "done", "2026-11-24 18:10:00", "2026-11-24 18:35:00", 420.0, "Marcus Chen", "Full pickup"),
+                (b_rows["Bin #1"], "done", "2026-11-24 18:10:00", "2026-11-24 18:35:00", 420.0, "Marcus Chen", "Symbiosis transfer → SteelWorks Ltd"),
                 (b_rows["Bin #4"], "done", "2026-11-24 18:45:00", "2026-11-24 19:05:00", 135.0, "Marcus Chen", "Hazardous full pickup"),
-                (b_rows["Bin #5"], "done", "2026-11-24 19:15:00", "2026-11-24 19:40:00", 360.0, "Marcus Chen", "Full pickup"),
+                (b_rows["Bin #5"], "done", "2026-11-24 19:15:00", "2026-11-24 19:40:00", 360.0, "Marcus Chen", "Symbiosis transfer → GreenAgro Organics"),
                 (b_rows["Bin #6"], "done", "2026-11-24 19:50:00", "2026-11-24 20:15:00", 210.0, "Marcus Chen", "Mixed landfill run"),
-                (b_rows["Bin #9"], "done", "2026-11-24 20:20:00", "2026-11-24 20:45:00", 280.0, "Marcus Chen", "Full pickup"),
+                (b_rows["Bin #9"], "done", "2026-11-24 20:20:00", "2026-11-24 20:45:00", 280.0, "Marcus Chen", "Full pickup (100%)"),
             ]
             cur.executemany(
                 """INSERT INTO pickups (bin_id, status, created_at, done_at, kg_collected, actor_name, note)
@@ -215,12 +213,9 @@ def build_state():
 
         tenants_raw = conn.execute("SELECT id, name, zone, needs_json FROM tenants ORDER BY id").fetchall()
         tenants = []
-        tenant_map = {}
         for t in tenants_raw:
             needs = json.loads(t["needs_json"])
-            obj = {"id": t["id"], "name": t["name"], "zone": t["zone"], "needs": needs}
-            tenants.append(obj)
-            tenant_map[t["id"]] = obj
+            tenants.append({"id": t["id"], "name": t["name"], "zone": t["zone"], "needs": needs})
 
         bins_raw = conn.execute(
             """SELECT b.id, b.label, b.tenant_id, b.waste_type, b.fill_pct, b.capacity_kg,
@@ -275,7 +270,6 @@ def build_state():
                 "note": r["note"] or "",
             })
 
-        # Priority queue: hazardous (solvent, oil) at top, then oldest created_at
         open_pickups.sort(key=lambda x: (x["priority_rank"], x["created_at"], x["id"]))
 
         done_raw = conn.execute(
@@ -323,7 +317,6 @@ def build_state():
 
         diversion_rate = round((diverted_kg / total_kg) * 100.0, 1) if total_kg > 0 else 0.0
 
-        # Symbiosis matching: bin >= 30% full and waste_type in another tenant's needs list
         matches = []
         for b in bins:
             if b["fill_pct"] >= 30.0 and b["est_kg"] > 0:
@@ -377,7 +370,7 @@ def build_state():
         }
 
 
-def complete_pickup_action(pickup_id=None, bin_id=None, percent=None, actor_name="Collector"):
+def complete_pickup_action(pickup_id=None, bin_id=None, percent=None, actor_name="Collector", custom_note=None):
     with db_lock:
         conn = get_conn()
         cur = conn.cursor()
@@ -417,23 +410,16 @@ def complete_pickup_action(pickup_id=None, bin_id=None, percent=None, actor_name
                 return {"ok": False, "error": "Bin is already empty"}
             kg_collected = round((removed_pct / 100.0) * cap, 1)
             new_fill = round(max(0.0, current_fill - removed_pct), 1)
-            note = f"Partial removal (-{removed_pct:.0f}%)"
+            note = custom_note or f"Partial removal (-{removed_pct:.0f}%)"
             cur.execute("UPDATE bins SET fill_pct = ? WHERE id = ?", (new_fill, target_bin_id))
 
-            if open_pickup_id is not None:
-                if new_fill < 80.0:
-                    cur.execute(
-                        """UPDATE pickups
-                           SET status = 'done', done_at = ?, kg_collected = ?, actor_name = ?, note = ?
-                           WHERE id = ?""",
-                        (ts, kg_collected, actor_name, f"{note}; fill dropped <80%", open_pickup_id),
-                    )
-                else:
-                    cur.execute(
-                        """INSERT INTO pickups (bin_id, status, created_at, done_at, kg_collected, actor_name, note)
-                           VALUES (?, 'done', ?, ?, ?, ?, ?)""",
-                        (target_bin_id, ts, ts, kg_collected, actor_name, note),
-                    )
+            if open_pickup_id is not None and new_fill < 80.0:
+                cur.execute(
+                    """UPDATE pickups
+                       SET status = 'done', done_at = ?, kg_collected = ?, actor_name = ?, note = ?
+                       WHERE id = ?""",
+                    (ts, kg_collected, actor_name, f"{note}; fill <80%", open_pickup_id),
+                )
             else:
                 cur.execute(
                     """INSERT INTO pickups (bin_id, status, created_at, done_at, kg_collected, actor_name, note)
@@ -443,23 +429,53 @@ def complete_pickup_action(pickup_id=None, bin_id=None, percent=None, actor_name
         else:
             kg_collected = round((current_fill / 100.0) * cap, 1)
             cur.execute("UPDATE bins SET fill_pct = 0.0 WHERE id = ?", (target_bin_id,))
+            note = custom_note or "Full pickup (100%)"
             if open_pickup_id is not None:
                 cur.execute(
                     """UPDATE pickups
-                       SET status = 'done', done_at = ?, kg_collected = ?, actor_name = ?, note = 'Full pickup (100%)'
+                       SET status = 'done', done_at = ?, kg_collected = ?, actor_name = ?, note = ?
                        WHERE id = ?""",
-                    (ts, kg_collected, actor_name, open_pickup_id),
+                    (ts, kg_collected, actor_name, note, open_pickup_id),
                 )
             else:
                 cur.execute(
                     """INSERT INTO pickups (bin_id, status, created_at, done_at, kg_collected, actor_name, note)
-                       VALUES (?, 'done', ?, ?, ?, ?, 'Full pickup (100%)')""",
-                    (target_bin_id, ts, ts, kg_collected, actor_name),
+                       VALUES (?, 'done', ?, ?, ?, ?, ?)""",
+                    (target_bin_id, ts, ts, kg_collected, actor_name, note),
                 )
 
         conn.commit()
         conn.close()
     return {"ok": True, "kg_collected": kg_collected, "state": build_state()}
+
+
+def transfer_symbiosis_action(bin_id, target_tenant_id, percent=100.0, actor_name="Symbiosis Router"):
+    with db_lock:
+        conn = get_conn()
+        b = conn.execute(
+            """SELECT b.*, t.name AS source_name
+               FROM bins b JOIN tenants t ON b.tenant_id = t.id WHERE b.id = ?""",
+            (bin_id,),
+        ).fetchone()
+        target = conn.execute("SELECT id, name, zone FROM tenants WHERE id = ?", (target_tenant_id,)).fetchone()
+        conn.close()
+
+    if not b or not target:
+        return {"ok": False, "error": "Source bin or target factory not found"}
+
+    pct = max(10.0, min(100.0, float(percent)))
+    avail_pct = min(float(b["fill_pct"]), pct)
+    if avail_pct <= 0:
+        return {"ok": False, "error": "No waste available in source bin to transfer"}
+
+    transferred_kg = round((avail_pct / 100.0) * float(b["capacity_kg"]), 1)
+    note = f"Transferred {transferred_kg:.1f} kg {b['waste_type']} → {target['name']} for reuse"
+    return complete_pickup_action(
+        bin_id=int(bin_id),
+        percent=avail_pct,
+        actor_name=actor_name,
+        custom_note=note,
+    )
 
 
 def dump_waste_action(bin_id, add_pct=25.0):
@@ -548,6 +564,18 @@ class LoopYardHandler(SimpleHTTPRequestHandler):
                 self._send_json({"ok": False, "error": "bin_id required"}, status=400)
                 return
             self._send_json(dump_waste_action(int(bin_id), pct))
+            return
+
+        if path == "/api/transfer":
+            bin_id = body.get("bin_id")
+            target_tenant_id = body.get("target_tenant_id")
+            pct = float(body.get("percent", 100.0))
+            actor_name = body.get("actor_name", "Symbiosis Router")
+            if bin_id is None or target_tenant_id is None:
+                self._send_json({"ok": False, "error": "bin_id and target_tenant_id required"}, status=400)
+                return
+            res = transfer_symbiosis_action(int(bin_id), int(target_tenant_id), pct, str(actor_name))
+            self._send_json(res, status=200 if res.get("ok") else 400)
             return
 
         if path in ("/api/pickup", "/api/complete_pickup", "/api/partial_collect"):

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LoopYard — Closed-Loop Industrial Waste & Symbiosis OS</title>
+  <title>LoopYard — Factory-to-Factory Waste Reuse & Symbiosis OS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -358,7 +358,7 @@
     /* Main Workspace Grid */
     .workspace {
       display: grid;
-      grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1.55fr) minmax(0, 1.15fr);
       gap: 18px;
       align-items: start;
     }
@@ -604,49 +604,77 @@
       font-size: 11px;
     }
 
-    /* Symbiosis Cards */
+    /* Factory-to-Factory Reuse Transfer Cards */
     .match-list {
       display: flex;
       flex-direction: column;
-      gap: 9px;
+      gap: 10px;
     }
 
     .match-card {
       border: 1px solid var(--border);
+      border-left: 3px solid var(--emerald);
       border-radius: 8px;
-      padding: 10px 12px;
+      padding: 11px 12px;
       background: var(--surface);
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
     }
 
-    .match-row {
-      display: flex;
+    .transfer-flow {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
       align-items: center;
-      justify-content: space-between;
       gap: 8px;
       font-size: 12px;
     }
 
-    .match-pill {
-      background: var(--emerald-soft);
-      color: var(--emerald);
-      border: 1px solid var(--emerald-border);
-      font-size: 11px;
+    .party-box {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 8px;
+    }
+
+    .party-role {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+
+    .party-name {
       font-weight: 600;
-      padding: 2px 8px;
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .flow-arrow {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--emerald);
+      background: var(--emerald-soft);
+      border: 1px solid var(--emerald-border);
+      padding: 3px 8px;
       border-radius: 999px;
       white-space: nowrap;
-      flex-shrink: 0;
+    }
+
+    .match-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .match-desc {
       font-size: 11.5px;
       color: var(--text-muted);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
 
     /* Demo Sign-Up & Showcase Section */
@@ -769,7 +797,7 @@
       .kpi-grid {
         grid-template-columns: 1fr;
       }
-      .bins-grid, .demo-steps, .demo-users-grid {
+      .bins-grid, .demo-steps, .demo-users-grid, .transfer-flow {
         grid-template-columns: 1fr;
       }
       .container {
@@ -784,7 +812,7 @@
       <div class="brand-mark">LY</div>
       <div>
         <div class="brand-title">LoopYard</div>
-        <div class="brand-sub">Closed-Loop Industrial Waste & Symbiosis OS</div>
+        <div class="brand-sub">Factory-to-Factory Waste Reuse & Symbiosis OS</div>
       </div>
     </div>
 
@@ -818,7 +846,6 @@
   </div>
 
   <main class="container">
-    <!-- Collapsible 2-Minute Demo Walkthrough -->
     <section class="demo-drawer" id="demoDrawer">
       <div class="panel-head" style="margin-bottom:4px;">
         <div class="panel-title">2-Minute Judge Demo Walkthrough</div>
@@ -826,18 +853,16 @@
       </div>
       <div class="demo-steps">
         <div class="demo-step"><strong>1. Overview</strong>Show 6 factories, 11 bins, diversion rate, and CO2e estimates.</div>
-        <div class="demo-step"><strong>2. Dump Waste</strong>Click "+25% Dump" on a solvent bin to cross the 80% alert threshold.</div>
-        <div class="demo-step"><strong>3. Priority Queue</strong>Show hazardous waste (solvent, oil) pinned at top, then oldest.</div>
-        <div class="demo-step"><strong>4. Collect / Partial</strong>Complete a pickup (100%) or remove partial (-25%) into compliance log.</div>
-        <div class="demo-step"><strong>5. Symbiosis</strong>Show a tenant's >=30% bin matched to a neighbor's material needs.</div>
+        <div class="demo-step"><strong>2. Dump Waste</strong>Click "+25% Dump" on a bin to add waste and test auto-pickup at ≥80%.</div>
+        <div class="demo-step"><strong>3. Reuse Transfer</strong>Click "Transfer to Reuse" to route one factory's waste to a neighbor that wants it.</div>
+        <div class="demo-step"><strong>4. Priority Queue</strong>Show hazardous waste (solvent, oil) pinned at top, then oldest.</div>
+        <div class="demo-step"><strong>5. Collect / Partial</strong>Complete a pickup (100%) or remove partial (-25%) into compliance log.</div>
         <div class="demo-step"><strong>6. Role Sign-Up</strong>Switch/sign up a Tenant, Collector, or Park Manager for judges.</div>
       </div>
     </section>
 
-    <!-- KPI Strip -->
     <section class="kpi-grid" id="kpiGrid"></section>
 
-    <!-- Main 2-Column Workspace -->
     <section class="workspace">
       <div class="col-stack">
         <!-- Collector Priority Dispatch Queue -->
@@ -868,33 +893,33 @@
         <!-- Smart Bin Telemetry Grid -->
         <div class="panel" id="binsPanel">
           <div class="panel-head">
-            <div class="panel-title">Smart Bin Telemetry <span class="panel-meta" id="binsCount">(11 Bins)</span></div>
+            <div class="panel-title">Factory Waste Bins <span class="panel-meta" id="binsCount">(11 Bins)</span></div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-              <label class="panel-meta" for="tenantFilter">Tenant:</label>
+              <label class="panel-meta" for="tenantFilter">Factory:</label>
               <select id="tenantFilter" class="btn">
-                <option value="all">All Tenants (6)</option>
+                <option value="all">All Factories (6)</option>
               </select>
             </div>
           </div>
           <div class="bins-grid" id="binsGrid"></div>
         </div>
 
-        <!-- Compliance Audit Trail -->
+        <!-- Reuse & Compliance Transfer Log -->
         <div class="panel" id="auditPanel">
           <div class="panel-head">
-            <div class="panel-title">Compliance Audit Trail <span class="panel-meta" id="auditCount">(0 Logged)</span></div>
-            <div class="panel-meta">Completed & partial pickups · Estimated CO2e factors</div>
+            <div class="panel-title">Reuse Transfers & Compliance Log <span class="panel-meta" id="auditCount">(0 Logged)</span></div>
+            <div class="panel-meta">Factory reuse transfers, pickups & CO2e estimates</div>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Done Time</th>
-                  <th>Tenant</th>
-                  <th>Bin & Type</th>
-                  <th>Collected</th>
-                  <th>By / Note</th>
+                  <th>Time</th>
+                  <th>Source Factory</th>
+                  <th>Material & Bin</th>
+                  <th>Weight</th>
+                  <th>Reuse / Action Note</th>
                 </tr>
               </thead>
               <tbody id="auditBody"></tbody>
@@ -904,11 +929,14 @@
       </div>
 
       <div class="col-stack">
-        <!-- Industrial Symbiosis Reuse Board -->
+        <!-- Factory-to-Factory Waste Reuse Board -->
         <div class="panel" id="symbiosisPanel">
           <div class="panel-head">
-            <div class="panel-title">Industrial Symbiosis Board <span class="panel-meta" id="matchCount">(0 Matches)</span></div>
+            <div class="panel-title">Factory-to-Factory Reuse Transfers <span class="panel-meta" id="matchCount">(0 Available)</span></div>
             <button class="btn" id="matchScopeToggle" style="display:none;">My Factory Only</button>
+          </div>
+          <div class="panel-meta" style="margin-bottom:10px;">
+            Matches bins ≥30% full with neighboring factories that want that material—transfer directly for reuse.
           </div>
           <div class="match-list" id="matchList"></div>
         </div>
@@ -946,7 +974,7 @@
           <select id="demoRole">
             <option value="park_manager">Park Manager (All bins, KPIs & compliance)</option>
             <option value="collector">Collector / Driver (Priority queue, full & partial pickup)</option>
-            <option value="tenant">Tenant / Factory (Own bins, +25% dump & reuse matches)</option>
+            <option value="tenant">Tenant / Factory (Own bins, +25% dump & reuse transfers)</option>
           </select>
         </div>
         <div class="field" id="tenantSelectField">
@@ -978,10 +1006,10 @@
       cardboard: 1.7, organic: 1.8, mixed: 1.3
     };
 
-    const STORAGE_KEY = "loopyard_standalone_v1";
-    const USER_STORAGE_KEY = "loopyard_active_user_v1";
+    const STORAGE_KEY = "loopyard_standalone_v2";
+    const USER_STORAGE_KEY = "loopyard_active_user_v2";
 
-    let backendAvailable = null; // null = untested, true = /api/state works, false = standalone mode
+    let backendAvailable = null;
     let state = null;
     let activeView = "unified";
     let activeUser = null;
@@ -999,10 +1027,9 @@
       el.textContent = msg;
       el.classList.add("show");
       clearTimeout(showToast._t);
-      showToast._t = setTimeout(() => el.classList.remove("show"), 2400);
+      showToast._t = setTimeout(() => el.classList.remove("show"), 2500);
     }
 
-    // Seeded fallback state for static hosting (e.g. Vercel) when no Python backend is running
     function createSeedStandaloneState() {
       const tenants = [
         { id: 1, name: "AutoParts Co", zone: "Zone A", needs: ["metal", "oil"] },
@@ -1013,17 +1040,17 @@
         { id: 6, name: "PolymerTech Industries", zone: "Zone C", needs: ["plastic", "solvent"] },
       ];
       const binsRaw = [
-        [1, "Bin #1", 1, "metal", 42.0, 500.0],
+        [1, "Bin #1", 1, "metal", 46.0, 500.0],
         [2, "Bin #2", 1, "oil", 64.0, 200.0],
-        [3, "Bin #3", 2, "metal", 38.0, 1000.0],
+        [3, "Bin #3", 2, "metal", 42.0, 1000.0],
         [4, "Bin #4", 2, "solvent", 74.0, 150.0],
         [5, "Bin #5", 4, "cardboard", 52.0, 400.0],
         [6, "Bin #6", 4, "mixed", 26.0, 300.0],
         [7, "Bin #7", 3, "solvent", 78.0, 250.0],
         [8, "Bin #8", 3, "oil", 44.0, 350.0],
         [9, "Bin #9", 5, "organic", 61.0, 600.0],
-        [10, "Bin #10", 5, "cardboard", 34.0, 200.0],
-        [11, "Bin #11", 6, "plastic", 48.0, 450.0],
+        [10, "Bin #10", 5, "cardboard", 38.0, 200.0],
+        [11, "Bin #11", 6, "plastic", 54.0, 450.0],
       ];
       const tMap = Object.fromEntries(tenants.map((t) => [t.id, t]));
       const bins = binsRaw.map(([id, label, tenant_id, waste_type, fill_pct, capacity_kg]) => ({
@@ -1034,9 +1061,9 @@
       }));
 
       const pickups = [
-        { id: 1, bin_id: 1, status: "done", created_at: "2026-11-24 18:10:00", done_at: "2026-11-24 18:35:00", kg_collected: 420.0, actor_name: "Marcus Chen", note: "Full pickup (100%)" },
+        { id: 1, bin_id: 1, status: "done", created_at: "2026-11-24 18:10:00", done_at: "2026-11-24 18:35:00", kg_collected: 420.0, actor_name: "Marcus Chen", note: "Transferred 420.0 kg metal → SteelWorks Ltd for reuse" },
         { id: 2, bin_id: 4, status: "done", created_at: "2026-11-24 18:45:00", done_at: "2026-11-24 19:05:00", kg_collected: 135.0, actor_name: "Marcus Chen", note: "Hazardous full pickup" },
-        { id: 3, bin_id: 5, status: "done", created_at: "2026-11-24 19:15:00", done_at: "2026-11-24 19:40:00", kg_collected: 360.0, actor_name: "Marcus Chen", note: "Full pickup (100%)" },
+        { id: 3, bin_id: 5, status: "done", created_at: "2026-11-24 19:15:00", done_at: "2026-11-24 19:40:00", kg_collected: 360.0, actor_name: "Marcus Chen", note: "Transferred 360.0 kg cardboard → GreenAgro Organics for reuse" },
         { id: 4, bin_id: 6, status: "done", created_at: "2026-11-24 19:50:00", done_at: "2026-11-24 20:15:00", kg_collected: 210.0, actor_name: "Marcus Chen", note: "Mixed landfill run" },
         { id: 5, bin_id: 9, status: "done", created_at: "2026-11-24 20:20:00", done_at: "2026-11-24 20:45:00", kg_collected: 280.0, actor_name: "Marcus Chen", note: "Full pickup (100%)" },
       ];
@@ -1269,6 +1296,34 @@
         raw.demo_users.push(newUser);
         activeUser = newUser;
         localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(newUser));
+      } else if (endpoint === "/api/transfer") {
+        const b = raw.bins.find((x) => x.id === payload.bin_id);
+        const target = raw.tenants.find((t) => t.id === payload.target_tenant_id);
+        if (b && target) {
+          const remPct = Math.min(b.fill_pct, Number(payload.percent || 100));
+          const kg = Number(((remPct / 100) * b.capacity_kg).toFixed(1));
+          b.fill_pct = Math.max(0.0, Number((b.fill_pct - remPct).toFixed(1)));
+          const openPickup = raw.pickups.find((p) => p.bin_id === b.id && p.status === "open");
+          const note = `Transferred ${kg.toFixed(1)} kg ${b.waste_type} → ${target.name} for reuse`;
+          if (openPickup && b.fill_pct < 80.0) {
+            openPickup.status = "done";
+            openPickup.done_at = ts;
+            openPickup.kg_collected = kg;
+            openPickup.actor_name = payload.actor_name || activeUser?.name || "Symbiosis Router";
+            openPickup.note = note;
+          } else {
+            raw.pickups.push({
+              id: raw.nextPickupId++,
+              bin_id: b.id,
+              status: "done",
+              created_at: ts,
+              done_at: ts,
+              kg_collected: kg,
+              actor_name: payload.actor_name || activeUser?.name || "Symbiosis Router",
+              note
+            });
+          }
+        }
       } else if (endpoint === "/api/pickup" || endpoint === "/api/partial_collect") {
         let targetBinId = payload.bin_id;
         let openPickup = null;
@@ -1401,9 +1456,9 @@
             <div class="kpi-sub">Solvents & oils pinned to top</div>
           </div>
           <div class="kpi-card emerald">
-            <div class="kpi-label">Collector Logged Weight</div>
+            <div class="kpi-label">Logged / Reused Weight</div>
             <div class="kpi-value tabular">${(myCollected || s.total_kg).toFixed(1)} <span style="font-size:14px;font-weight:500;">kg</span></div>
-            <div class="kpi-sub">Full & partial (-25%) offloads</div>
+            <div class="kpi-sub">Pickups & factory transfers</div>
           </div>
           <div class="kpi-card teal">
             <div class="kpi-label">Park Diversion Rate</div>
@@ -1429,17 +1484,17 @@
           <div class="kpi-card amber">
             <div class="kpi-label">Current Stored Waste</div>
             <div class="kpi-value tabular">${storedKg.toFixed(1)} <span style="font-size:14px;font-weight:500;">kg</span></div>
-            <div class="kpi-sub">Across active factory bins</div>
+            <div class="kpi-sub">Available for pickup or reuse</div>
           </div>
           <div class="kpi-card emerald">
-            <div class="kpi-label">Outbound Reuse Matches</div>
+            <div class="kpi-label">Outbound Reuse Offers</div>
             <div class="kpi-value tabular">${outbound}</div>
             <div class="kpi-sub">Neighbors can reuse your bins ≥30%</div>
           </div>
           <div class="kpi-card teal">
-            <div class="kpi-label">Inbound Material Matches</div>
+            <div class="kpi-label">Inbound Waste You Need</div>
             <div class="kpi-value tabular">${inbound}</div>
-            <div class="kpi-sub">Available inputs matching your needs</div>
+            <div class="kpi-sub">Neighbor waste matching your inputs</div>
           </div>
         `;
         return;
@@ -1447,14 +1502,14 @@
 
       kpiGrid.innerHTML = `
         <div class="kpi-card">
-          <div class="kpi-label">Total Waste Collected</div>
+          <div class="kpi-label">Total Waste Processed</div>
           <div class="kpi-value tabular">${s.total_kg.toFixed(1)} <span style="font-size:14px;font-weight:500;">kg</span></div>
-          <div class="kpi-sub">Diverted: ${s.diverted_kg.toFixed(1)} kg · Mixed/Landfill: ${s.landfill_kg.toFixed(1)} kg</div>
+          <div class="kpi-sub">Diverted/Reused: ${s.diverted_kg.toFixed(1)} kg · Mixed: ${s.landfill_kg.toFixed(1)} kg</div>
         </div>
         <div class="kpi-card emerald">
           <div class="kpi-label">Landfill Diversion Rate</div>
           <div class="kpi-value tabular">${s.diversion_rate.toFixed(1)}%</div>
-          <div class="kpi-sub">Non-mixed streams vs. total collected kg</div>
+          <div class="kpi-sub">Non-mixed streams vs. total kg</div>
         </div>
         <div class="kpi-card teal">
           <div class="kpi-label">Estimated CO2e Avoided</div>
@@ -1501,7 +1556,7 @@
     function renderBins() {
       const select = document.getElementById("tenantFilter");
       const prevVal = tenantFilter;
-      select.innerHTML = `<option value="all">All Tenants (${state.tenants.length})</option>` +
+      select.innerHTML = `<option value="all">All Factories (${state.tenants.length})</option>` +
         state.tenants.map((t) => `<option value="${t.id}">${t.name} (${t.zone})</option>`).join("");
       select.value = state.tenants.some((t) => String(t.id) === String(prevVal)) ? prevVal : "all";
 
@@ -1551,24 +1606,36 @@
         list = list.filter((m) => m.source_tenant_id === activeUser.tenant_id || m.target_tenant_id === activeUser.tenant_id);
       }
 
-      document.getElementById("matchCount").textContent = `(${list.length} Matches)`;
+      document.getElementById("matchCount").textContent = `(${list.length} Available)`;
       const el = document.getElementById("matchList");
 
       if (!list.length) {
-        el.innerHTML = `<div class="empty-state">No active reuse matches yet (requires a bin ≥30% full matching another tenant's needs).</div>`;
+        el.innerHTML = `<div class="empty-state">No active reuse matches yet (requires a bin ≥30% full matching another factory's needs).</div>`;
         return;
       }
 
-      el.innerHTML = list.slice(0, 10).map((m) => `
+      el.innerHTML = list.slice(0, 8).map((m) => `
         <div class="match-card">
-          <div class="match-row">
-            <strong>${m.source_tenant}</strong>
-            <span class="match-pill mono">→ ${m.available_kg.toFixed(1)} kg</span>
-            <strong>${m.target_tenant}</strong>
+          <div class="transfer-flow">
+            <div class="party-box">
+              <div class="party-role">Waste Source</div>
+              <div class="party-name">${m.source_tenant}</div>
+            </div>
+            <span class="flow-arrow mono">→ ${m.available_kg.toFixed(1)} kg</span>
+            <div class="party-box">
+              <div class="party-role">Wants for Reuse</div>
+              <div class="party-name">${m.target_tenant}</div>
+            </div>
           </div>
-          <div class="match-row">
-            <span class="w-tag w-${m.waste_type}">${m.waste_type}</span>
-            <span class="match-desc">${m.source_tenant} has ${m.available_kg.toFixed(1)} kg of ${m.waste_type} (${m.bin_label}), ${m.target_tenant} needs it</span>
+          <div class="match-footer">
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+              <span class="w-tag w-${m.waste_type}">${m.waste_type}</span>
+              <span class="match-desc">${m.source_tenant} dump (${m.bin_label}, ${m.fill_pct.toFixed(0)}%) → ${m.target_tenant}</span>
+            </div>
+            <div class="action-group">
+              <button class="btn btn-primary" onclick="onTransferReuse(${m.bin_id}, ${m.target_tenant_id}, 100, '${m.source_tenant.replace(/'/g, "")}', '${m.target_tenant.replace(/'/g, "")}')">Transfer to Reuse</button>
+              <button class="btn btn-soft-emerald" onclick="onTransferReuse(${m.bin_id}, ${m.target_tenant_id}, 50, '${m.source_tenant.replace(/'/g, "")}', '${m.target_tenant.replace(/'/g, "")}')">-50%</button>
+            </div>
           </div>
         </div>
       `).join("");
@@ -1580,7 +1647,7 @@
       document.getElementById("auditCount").textContent = `(${logs.length} Logged)`;
 
       if (!logs.length) {
-        tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No completed pickups yet.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No transfers or pickups logged yet.</td></tr>`;
         return;
       }
 
@@ -1591,7 +1658,7 @@
           <td><strong>${l.tenant_name}</strong></td>
           <td><span class="w-tag w-${l.waste_type}">${l.waste_type}</span> <span class="panel-meta">${l.bin_label}</span></td>
           <td class="mono"><strong>${l.kg_collected.toFixed(1)} kg</strong></td>
-          <td class="panel-meta">${l.actor_name} · ${l.note}</td>
+          <td class="panel-meta">${l.note}</td>
         </tr>
       `).join("");
     }
@@ -1636,10 +1703,19 @@
       applyViewVisibility();
     }
 
-    // Window callbacks for inline handlers
     window.onDumpWaste = async (binId, pct) => {
       await postAction("/api/dump", { bin_id: binId, percent: pct });
       showToast(`Added +${pct}% waste to Bin #${binId}`);
+    };
+
+    window.onTransferReuse = async (binId, targetTenantId, percent, fromName, toName) => {
+      await postAction("/api/transfer", {
+        bin_id: binId,
+        target_tenant_id: targetTenantId,
+        percent,
+        actor_name: activeUser?.name || "Symbiosis Router"
+      });
+      showToast(`Transferred ${percent}% waste from ${fromName} → ${toName} for reuse`);
     };
 
     window.onPartialBin = async (binId, pct) => {
@@ -1670,7 +1746,6 @@
 
     window.onSelectDemoUser = (u) => switchToUser(u, true);
 
-    // Events
     document.getElementById("viewTabs").addEventListener("click", (e) => {
       const btn = e.target.closest(".view-tab");
       if (!btn) return;
@@ -1707,7 +1782,6 @@
       document.getElementById("demoDrawer").classList.remove("open");
     });
 
-    // Modal logic
     const modal = document.getElementById("signupModal");
     function openModal() {
       const sel = document.getElementById("demoTenantSelect");
