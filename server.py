@@ -53,6 +53,17 @@ def init_db(reset=False):
         conn = get_conn()
         cur = conn.cursor()
 
+        # Check if legacy table exists without bin_id
+        try:
+            cols = [c[1] for c in cur.execute("PRAGMA table_info(pickups)").fetchall()]
+            if cols and "bin_id" not in cols:
+                cur.execute("DROP TABLE IF EXISTS pickups")
+                cur.execute("DROP TABLE IF EXISTS bins")
+                cur.execute("DROP TABLE IF EXISTS tenants")
+                cur.execute("DROP TABLE IF EXISTS demo_users")
+        except Exception:
+            pass
+
         cur.execute("""
             CREATE TABLE IF NOT EXISTS tenants (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -494,16 +505,17 @@ def dump_waste_action(bin_id, add_pct=25.0):
     return {"ok": True, "new_fill": new_fill, "state": build_state()}
 
 
-def create_demo_user_action(name, role, scope_label, tenant_id=None):
+def create_demo_user_action(name, role, scope_label=None, scope=None, tenant_id=None):
     name = (name or "").strip()
-    role = (role or "tenant").strip()
-    if role not in ("park_manager", "collector", "tenant"):
-        role = "tenant"
+    raw_role = (role or "tenant").strip()
+    role_norm = raw_role.lower().replace(" ", "_")
+    if role_norm not in ("park_manager", "collector", "tenant"):
+        role_norm = "tenant"
     if not name:
-        return {"ok": False, "error": "Name is required"}
-    scope_label = (scope_label or "").strip() or (
-        "All Zones (Park-Wide)" if role == "park_manager"
-        else "Truck #05 · Express Route" if role == "collector"
+        return {"ok": False, "success": False, "error": "Name is required"}
+    scope_val = (scope or scope_label or "").strip() or (
+        "All Zones (Park-Wide)" if role_norm == "park_manager"
+        else "Truck #05 · Express Route" if role_norm == "collector"
         else "Assigned Factory Tenant"
     )
     with db_lock:
@@ -511,12 +523,20 @@ def create_demo_user_action(name, role, scope_label, tenant_id=None):
         cur = conn.cursor()
         cur.execute(
             "INSERT INTO demo_users (name, role, scope_label, tenant_id, created_at) VALUES (?, ?, ?, ?, ?)",
-            (name, role, scope_label, tenant_id, now_str()),
+            (name, role_norm, scope_val, tenant_id, now_str()),
         )
         new_id = cur.lastrowid
         conn.commit()
         conn.close()
-    return {"ok": True, "user_id": new_id, "state": build_state()}
+    user_dict = {
+        "id": new_id,
+        "name": name,
+        "role": raw_role,
+        "scope": scope_val,
+        "scope_label": scope_val,
+        "tenant_id": tenant_id
+    }
+    return {"ok": True, "success": True, "user_id": new_id, "user": user_dict, "state": build_state()}
 
 
 class LoopYardHandler(SimpleHTTPRequestHandler):
@@ -543,6 +563,19 @@ class LoopYardHandler(SimpleHTTPRequestHandler):
         path = self.path.split("?")[0]
         if path == "/api/state":
             self._send_json(build_state())
+            return
+        if path == "/api/demo_users":
+            conn = get_conn()
+            raw_users = conn.execute("SELECT id, name, role, scope_label, tenant_id, created_at FROM demo_users ORDER BY id").fetchall()
+            conn.close()
+            role_map = {"park_manager": "Park Manager", "collector": "Collector", "tenant": "Tenant"}
+            users = []
+            for u in raw_users:
+                d = dict(u)
+                d["scope"] = d.get("scope_label", "")
+                d["role"] = role_map.get(d["role"], d["role"])
+                users.append(d)
+            self._send_json({"ok": True, "success": True, "demo_users": users})
             return
         if path == "/":
             self.path = "/index.html"
@@ -607,6 +640,7 @@ class LoopYardHandler(SimpleHTTPRequestHandler):
                 name=body.get("name"),
                 role=body.get("role"),
                 scope_label=body.get("scope_label"),
+                scope=body.get("scope"),
                 tenant_id=body.get("tenant_id"),
             )
             self._send_json(res, status=200 if res.get("ok") else 400)
@@ -616,6 +650,10 @@ class LoopYardHandler(SimpleHTTPRequestHandler):
 
     def log_message(self, format, *args):
         return
+
+
+LoopYardRequestHandler = LoopYardHandler
+sensor_simulation_loop = sensor_loop
 
 
 def main():

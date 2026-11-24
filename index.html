@@ -252,6 +252,18 @@
       border: 1px solid var(--blue-border);
     }
 
+    .role-focus-tag {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--teal);
+      background: var(--teal-soft);
+      border: 1px solid var(--teal-border);
+      padding: 1px 7px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-top: 2px;
+    }
+
     .persona-right {
       display: flex;
       align-items: center;
@@ -635,6 +647,8 @@
       border: 1px solid var(--border);
       border-radius: 6px;
       padding: 6px 8px;
+      min-width: 0;
+      overflow: hidden;
     }
 
     .party-role {
@@ -662,6 +676,7 @@
       padding: 3px 8px;
       border-radius: 999px;
       white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .match-footer {
@@ -669,12 +684,55 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      flex-wrap: wrap;
+    }
+
+    .match-summary-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
     }
 
     .match-desc {
       font-size: 11.5px;
       color: var(--text-muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .match-action-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .symbiosis-type-badge {
+      display: inline-block;
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-bottom: 2px;
+      align-self: flex-start;
+    }
+
+    .badge-outbound {
+      background: var(--blue-soft);
+      color: var(--blue);
+      border: 1px solid var(--blue-border);
+    }
+
+    .badge-inbound {
+      background: var(--emerald-soft);
+      color: var(--emerald);
+      border: 1px solid var(--emerald-border);
     }
 
     /* Demo Sign-Up & Showcase Section */
@@ -817,8 +875,7 @@
     </div>
 
     <div class="view-tabs" id="viewTabs">
-      <button class="view-tab active" data-view="unified">Unified View</button>
-      <button class="view-tab" data-view="park_manager">Park Manager</button>
+      <button class="view-tab active" data-view="park_manager">Park Manager</button>
       <button class="view-tab" data-view="collector">Collector</button>
       <button class="view-tab" data-view="tenant">Tenant</button>
     </div>
@@ -835,9 +892,14 @@
   <div class="persona-strip">
     <div class="persona-left">
       <div class="avatar" id="personaAvatar">AV</div>
-      <strong id="personaName">Ananya Verma</strong>
-      <span class="role-tag" id="personaRoleBadge">Park Manager</span>
-      <span class="panel-meta" id="personaScope">All Zones (Park-Wide)</span>
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <strong id="personaName">Ananya Verma</strong>
+          <span class="role-tag" id="personaRoleBadge">Park Manager</span>
+          <span class="panel-meta" id="personaScope">All Zones (Park-Wide)</span>
+        </div>
+        <div class="role-focus-tag" id="roleFocusTag">Macro Park Governance & ESG Compliance</div>
+      </div>
     </div>
     <div class="persona-right">
       <span class="demo-note">Demo sign-up (local simulation):</span>
@@ -868,8 +930,8 @@
         <!-- Collector Priority Dispatch Queue -->
         <div class="panel" id="queuePanel">
           <div class="panel-head">
-            <div class="panel-title">Collector Priority Dispatch Queue <span class="panel-meta" id="queueCount">(0 Open)</span></div>
-            <div class="panel-meta">Hazardous (solvent, oil) first, then oldest · Auto-created at ≥80%</div>
+            <div class="panel-title" id="queueTitle">Collector Priority Dispatch Queue <span class="panel-meta" id="queueCount">(0 Open)</span></div>
+            <div class="panel-meta" id="queueSub">Hazardous (solvent, oil) first, then oldest · Auto-created at ≥80%</div>
           </div>
           <div class="table-wrap">
             <table>
@@ -893,7 +955,7 @@
         <!-- Smart Bin Telemetry Grid -->
         <div class="panel" id="binsPanel">
           <div class="panel-head">
-            <div class="panel-title">Factory Waste Bins <span class="panel-meta" id="binsCount">(11 Bins)</span></div>
+            <div class="panel-title" id="binsTitle">Factory Waste Bins <span class="panel-meta" id="binsCount">(11 Bins)</span></div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
               <label class="panel-meta" for="tenantFilter">Factory:</label>
               <select id="tenantFilter" class="btn">
@@ -901,14 +963,17 @@
               </select>
             </div>
           </div>
+          <div class="panel-meta" id="binsSub" style="margin-bottom:10px;">
+            Real-time status across industrial park zones (Zone A, B, C) · Click +25% Dump to simulate production scrap.
+          </div>
           <div class="bins-grid" id="binsGrid"></div>
         </div>
 
         <!-- Reuse & Compliance Transfer Log -->
         <div class="panel" id="auditPanel">
           <div class="panel-head">
-            <div class="panel-title">Reuse Transfers & Compliance Log <span class="panel-meta" id="auditCount">(0 Logged)</span></div>
-            <div class="panel-meta">Factory reuse transfers, pickups & CO2e estimates</div>
+            <div class="panel-title" id="auditTitle">Reuse Transfers & Compliance Log <span class="panel-meta" id="auditCount">(0 Logged)</span></div>
+            <div class="panel-meta" id="auditSub">Certified environmental audit trail for regulatory filings & ESG reporting</div>
           </div>
           <div class="table-wrap">
             <table>
@@ -932,11 +997,11 @@
         <!-- Factory-to-Factory Waste Reuse Board -->
         <div class="panel" id="symbiosisPanel">
           <div class="panel-head">
-            <div class="panel-title">Factory-to-Factory Reuse Transfers <span class="panel-meta" id="matchCount">(0 Available)</span></div>
+            <div class="panel-title" id="symbiosisTitle">Factory-to-Factory Reuse Transfers <span class="panel-meta" id="matchCount">(0 Available)</span></div>
             <button class="btn" id="matchScopeToggle" style="display:none;">My Factory Only</button>
           </div>
-          <div class="panel-meta" style="margin-bottom:10px;">
-            Matches bins ≥30% full with neighboring factories that want that material—transfer directly for reuse.
+          <div class="panel-meta" id="symbiosisDesc" style="margin-bottom:10px;">
+            Closed-loop industrial symbiosis: turns one factory's surplus bin dump (≥30% fill) into another factory's raw material input—cutting hauling costs, landfill waste, and new material extraction.
           </div>
           <div class="match-list" id="matchList"></div>
         </div>
@@ -1011,7 +1076,7 @@
 
     let backendAvailable = null;
     let state = null;
-    let activeView = "unified";
+    let activeView = "park_manager";
     let activeUser = null;
     let tenantFilter = "all";
     let onlyMyMatches = false;
@@ -1396,7 +1461,15 @@
           if (saved) activeUser = state.demo_users.find((u) => u.id === saved.id) || saved;
         } catch (_) {}
       }
-      if (!activeUser) activeUser = state.demo_users[0];
+      if (!activeUser) {
+        activeUser = state.demo_users.find((u) => u.role === "park_manager") || state.demo_users[0];
+      }
+      if (activeUser) {
+        activeView = activeUser.role;
+        document.querySelectorAll(".view-tab").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.view === activeView);
+        });
+      }
     }
 
     function switchToUser(user, syncView = true) {
@@ -1416,7 +1489,7 @@
         }
       }
       renderAll();
-      showToast(`Active demo role: ${user.name} (${user.role.replace("_", " ")})`);
+      showToast(`Active role: ${user.name} (${user.role.replace("_", " ")})`);
     }
 
     function renderPersonaBar() {
@@ -1428,6 +1501,16 @@
       document.getElementById("personaRoleBadge").textContent = roleLabels[activeUser.role] || activeUser.role;
       document.getElementById("personaScope").textContent = activeUser.scope_label || "";
 
+      const focusLabels = {
+        park_manager: "Macro Park Governance & ESG Compliance",
+        collector: "Prioritized Task Dispatch & Execution",
+        tenant: "Internal Bin Tracking & Circular Exchange"
+      };
+      const focusEl = document.getElementById("roleFocusTag");
+      if (focusEl) {
+        focusEl.textContent = focusLabels[activeView] || focusLabels[activeUser.role] || "";
+      }
+
       const badge = document.getElementById("liveBadge");
       const txt = document.getElementById("liveText");
       badge.classList.toggle("paused", Boolean(state.paused));
@@ -1437,7 +1520,7 @@
 
     function renderKPIs() {
       const s = state.stats;
-      const role = activeView === "unified" ? activeUser?.role : activeView;
+      const role = activeView;
       const kpiGrid = document.getElementById("kpiGrid");
 
       if (role === "collector") {
@@ -1451,19 +1534,19 @@
             <div class="kpi-sub">${s.haz_pickups_count} Hazardous P1 · ${s.std_pickups_count} Standard P2</div>
           </div>
           <div class="kpi-card">
-            <div class="kpi-label">Hazardous Bins (≥80%)</div>
+            <div class="kpi-label">Hazardous P1 Tasks</div>
             <div class="kpi-value tabular">${s.haz_pickups_count}</div>
-            <div class="kpi-sub">Solvents & oils pinned to top</div>
+            <div class="kpi-sub">Solvents & oils pinned to top of route</div>
           </div>
           <div class="kpi-card emerald">
-            <div class="kpi-label">Logged / Reused Weight</div>
+            <div class="kpi-label">Total Weight Collected Today</div>
             <div class="kpi-value tabular">${(myCollected || s.total_kg).toFixed(1)} <span style="font-size:14px;font-weight:500;">kg</span></div>
-            <div class="kpi-sub">Pickups & factory transfers</div>
+            <div class="kpi-sub">Driver shift pickups & transfers</div>
           </div>
           <div class="kpi-card teal">
-            <div class="kpi-label">Park Diversion Rate</div>
-            <div class="kpi-value tabular">${s.diversion_rate.toFixed(1)}%</div>
-            <div class="kpi-sub">${s.diverted_kg.toFixed(1)} kg non-mixed diverted</div>
+            <div class="kpi-label">Assigned Route / Truck</div>
+            <div class="kpi-value tabular" style="font-size:17px;font-weight:700;">${activeUser?.scope_label ? activeUser.scope_label.split(" · ")[0] : "Truck #04"}</div>
+            <div class="kpi-sub">${activeUser?.scope_label || "Zones A, B & C Express"}</div>
           </div>
         `;
         return;
@@ -1477,49 +1560,50 @@
         const inbound = state.matches.filter((m) => m.target_tenant_id === tid).length;
         kpiGrid.innerHTML = `
           <div class="kpi-card">
-            <div class="kpi-label">Factory Bins</div>
+            <div class="kpi-label">Active Factory Bins</div>
             <div class="kpi-value tabular">${tBins.length}</div>
             <div class="kpi-sub">${activeUser.scope_label}</div>
           </div>
           <div class="kpi-card amber">
             <div class="kpi-label">Current Stored Waste</div>
             <div class="kpi-value tabular">${storedKg.toFixed(1)} <span style="font-size:14px;font-weight:500;">kg</span></div>
-            <div class="kpi-sub">Available for pickup or reuse</div>
+            <div class="kpi-sub">Real-time fill across factory bins</div>
           </div>
           <div class="kpi-card emerald">
-            <div class="kpi-label">Outbound Reuse Offers</div>
+            <div class="kpi-label">Outbound Reuse Matches</div>
             <div class="kpi-value tabular">${outbound}</div>
-            <div class="kpi-sub">Neighbors can reuse your bins ≥30%</div>
+            <div class="kpi-sub">Surplus bins ≥30% matching neighbor needs</div>
           </div>
           <div class="kpi-card teal">
-            <div class="kpi-label">Inbound Waste You Need</div>
+            <div class="kpi-label">Inbound Feedstock Offers</div>
             <div class="kpi-value tabular">${inbound}</div>
-            <div class="kpi-sub">Neighbor waste matching your inputs</div>
+            <div class="kpi-sub">Neighbor byproducts offsetting procurement</div>
           </div>
         `;
         return;
       }
 
+      // park_manager (default)
       kpiGrid.innerHTML = `
         <div class="kpi-card">
           <div class="kpi-label">Total Waste Processed</div>
           <div class="kpi-value tabular">${s.total_kg.toFixed(1)} <span style="font-size:14px;font-weight:500;">kg</span></div>
-          <div class="kpi-sub">Diverted/Reused: ${s.diverted_kg.toFixed(1)} kg · Mixed: ${s.landfill_kg.toFixed(1)} kg</div>
+          <div class="kpi-sub">Diverted: ${s.diverted_kg.toFixed(1)} kg · Landfill: ${s.landfill_kg.toFixed(1)} kg</div>
         </div>
         <div class="kpi-card emerald">
           <div class="kpi-label">Landfill Diversion Rate</div>
           <div class="kpi-value tabular">${s.diversion_rate.toFixed(1)}%</div>
-          <div class="kpi-sub">Non-mixed streams vs. total kg</div>
+          <div class="kpi-sub">Non-mixed circular streams vs. total kg</div>
         </div>
         <div class="kpi-card teal">
-          <div class="kpi-label">Estimated CO2e Avoided</div>
+          <div class="kpi-label">Estimated CO₂ Avoided</div>
           <div class="kpi-value tabular">${s.co2_avoided_kg.toFixed(1)} <span style="font-size:14px;font-weight:500;">kg</span></div>
-          <div class="kpi-sub">Rough prototype average factor estimate</div>
+          <div class="kpi-sub">Certified factor estimates for ESG disclosures</div>
         </div>
         <div class="kpi-card amber">
           <div class="kpi-label">Open Pickup Tasks</div>
           <div class="kpi-value tabular">${s.open_pickups_count}</div>
-          <div class="kpi-sub">${s.haz_pickups_count} Hazardous · ${s.std_pickups_count} Standard</div>
+          <div class="kpi-sub">${s.haz_pickups_count} Hazardous P1 · ${s.std_pickups_count} Standard P2</div>
         </div>
       `;
     }
@@ -1545,7 +1629,7 @@
           <td class="mono panel-meta">${p.created_at.slice(11)}</td>
           <td>
             <div class="action-group">
-              <button class="btn btn-primary" onclick="onCompletePickup(${p.id})">Done (100%)</button>
+              <button class="btn btn-primary" onclick="onCompletePickup(${p.id})">Mark Collected</button>
               <button class="btn btn-soft-emerald" onclick="onPartialPickup(${p.id}, 25)">-25%</button>
             </div>
           </td>
@@ -1597,7 +1681,7 @@
 
     function renderMatches() {
       const toggleBtn = document.getElementById("matchScopeToggle");
-      const isTenant = activeUser?.role === "tenant" && activeUser?.tenant_id;
+      const isTenant = activeView === "tenant" && activeUser?.tenant_id;
       toggleBtn.style.display = isTenant ? "inline-block" : "none";
       toggleBtn.textContent = onlyMyMatches ? "Showing My Factory" : "All Park Matches";
 
@@ -1614,40 +1698,66 @@
         return;
       }
 
-      el.innerHTML = list.slice(0, 8).map((m) => `
-        <div class="match-card">
-          <div class="transfer-flow">
-            <div class="party-box">
-              <div class="party-role">Waste Source</div>
-              <div class="party-name">${m.source_tenant}</div>
+      el.innerHTML = list.slice(0, 8).map((m) => {
+        const isInbound = isTenant && m.target_tenant_id === activeUser.tenant_id;
+        const isOutbound = isTenant && m.source_tenant_id === activeUser.tenant_id;
+
+        let badgeHtml = "";
+        let primaryBtnText = "Transfer to Reuse";
+        let secondaryBtnText = "-50%";
+        let descText = `${m.source_tenant} dump (${m.bin_label}, ${m.fill_pct.toFixed(0)}%) → ${m.target_tenant}`;
+
+        if (isInbound) {
+          badgeHtml = `<span class="symbiosis-type-badge badge-inbound">Inbound Feedstock Offer · Offsets Procurement</span>`;
+          primaryBtnText = "Adopt for Reuse";
+          secondaryBtnText = "Adopt 50%";
+          descText = `Neighbor ${m.source_tenant} has ${m.available_kg.toFixed(1)} kg ${m.waste_type} ready to offset your raw inputs`;
+        } else if (isOutbound) {
+          badgeHtml = `<span class="symbiosis-type-badge badge-outbound">Outbound Surplus Offer</span>`;
+          descText = `Your ${m.bin_label} (${m.waste_type}, ${m.fill_pct.toFixed(0)}%) matches ${m.target_tenant}'s needs`;
+        }
+
+        return `
+          <div class="match-card">
+            ${badgeHtml}
+            <div class="transfer-flow">
+              <div class="party-box">
+                <div class="party-role">Waste Source</div>
+                <div class="party-name" title="${m.source_tenant}">${m.source_tenant}</div>
+              </div>
+              <span class="flow-arrow mono">→ ${m.available_kg.toFixed(1)} kg</span>
+              <div class="party-box">
+                <div class="party-role">Wants for Reuse</div>
+                <div class="party-name" title="${m.target_tenant}">${m.target_tenant}</div>
+              </div>
             </div>
-            <span class="flow-arrow mono">→ ${m.available_kg.toFixed(1)} kg</span>
-            <div class="party-box">
-              <div class="party-role">Wants for Reuse</div>
-              <div class="party-name">${m.target_tenant}</div>
+            <div class="match-footer">
+              <div class="match-summary-group">
+                <span class="w-tag w-${m.waste_type}">${m.waste_type}</span>
+                <span class="match-desc" title="${descText}">${descText}</span>
+              </div>
+              <div class="match-action-group">
+                <button class="btn btn-primary" onclick="onTransferReuse(${m.bin_id}, ${m.target_tenant_id}, 100, '${m.source_tenant.replace(/'/g, "")}', '${m.target_tenant.replace(/'/g, "")}')">${primaryBtnText}</button>
+                <button class="btn btn-soft-emerald" onclick="onTransferReuse(${m.bin_id}, ${m.target_tenant_id}, 50, '${m.source_tenant.replace(/'/g, "")}', '${m.target_tenant.replace(/'/g, "")}')">${secondaryBtnText}</button>
+              </div>
             </div>
           </div>
-          <div class="match-footer">
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-              <span class="w-tag w-${m.waste_type}">${m.waste_type}</span>
-              <span class="match-desc">${m.source_tenant} dump (${m.bin_label}, ${m.fill_pct.toFixed(0)}%) → ${m.target_tenant}</span>
-            </div>
-            <div class="action-group">
-              <button class="btn btn-primary" onclick="onTransferReuse(${m.bin_id}, ${m.target_tenant_id}, 100, '${m.source_tenant.replace(/'/g, "")}', '${m.target_tenant.replace(/'/g, "")}')">Transfer to Reuse</button>
-              <button class="btn btn-soft-emerald" onclick="onTransferReuse(${m.bin_id}, ${m.target_tenant_id}, 50, '${m.source_tenant.replace(/'/g, "")}', '${m.target_tenant.replace(/'/g, "")}')">-50%</button>
-            </div>
-          </div>
-        </div>
-      `).join("");
+        `;
+      }).join("");
     }
 
     function renderAudit() {
       const tbody = document.getElementById("auditBody");
-      const logs = state.completed_log;
+      let logs = state.completed_log;
+      if (activeView === "tenant" && activeUser?.tenant_id) {
+        const tid = activeUser.tenant_id;
+        const tName = (activeUser.scope_label || "").split(" · ")[0].split(" (")[0].trim();
+        logs = logs.filter((l) => l.tenant_id === tid || (l.note && l.note.includes(tName)));
+      }
       document.getElementById("auditCount").textContent = `(${logs.length} Logged)`;
 
       if (!logs.length) {
-        tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No transfers or pickups logged yet.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No transfers or pickups logged yet for this scope.</td></tr>`;
         return;
       }
 
@@ -1676,7 +1786,7 @@
             </div>
             <div class="panel-meta">${u.scope_label}</div>
             <button class="btn ${isCurrent ? "btn-primary" : ""}" style="margin-top:4px;" onclick='onSelectDemoUser(${JSON.stringify(u).replace(/'/g, "&#39;")})'>
-              ${isCurrent ? "Active View" : "Switch to Role"}
+              ${isCurrent ? "Active Role" : "Switch to Role"}
             </button>
           </div>
         `;
@@ -1684,11 +1794,54 @@
     }
 
     function applyViewVisibility() {
-      const role = activeView === "unified" ? null : activeView;
-      document.getElementById("queuePanel").style.display = (!role || role === "park_manager" || role === "collector") ? "block" : "none";
-      document.getElementById("auditPanel").style.display = (!role || role === "park_manager" || role === "collector") ? "block" : "none";
-      document.getElementById("binsPanel").style.display = "block";
-      document.getElementById("symbiosisPanel").style.display = "block";
+      const role = activeView;
+      const qPanel = document.getElementById("queuePanel");
+      const bPanel = document.getElementById("binsPanel");
+      const aPanel = document.getElementById("auditPanel");
+      const sPanel = document.getElementById("symbiosisPanel");
+      const dPanel = document.getElementById("demoUsersPanel");
+
+      // Panels visibility
+      qPanel.style.display = (role === "park_manager" || role === "collector") ? "block" : "none";
+      bPanel.style.display = "block";
+      aPanel.style.display = "block";
+      sPanel.style.display = "block";
+      dPanel.style.display = "block";
+
+      // Dynamic titles & subtitles according to Slide 4
+      const qTitle = document.getElementById("queueTitle");
+      const qSub = document.getElementById("queueSub");
+      const bTitle = document.getElementById("binsTitle");
+      const bSub = document.getElementById("binsSub");
+      const aTitle = document.getElementById("auditTitle");
+      const aSub = document.getElementById("auditSub");
+      const sTitle = document.getElementById("symbiosisTitle");
+
+      if (role === "collector") {
+        if (qTitle) qTitle.firstChild.textContent = "Collector Priority Dispatch Queue ";
+        if (qSub) qSub.textContent = "P1 Hazardous (solvents, oils) pinned to top of route · Auto-dispatched at ≥80% fill";
+        if (bTitle) bTitle.firstChild.textContent = "Route Smart Bins & Telemetry ";
+        if (bSub) bSub.textContent = "Live fill levels along driver route — test byproduct dumps with +25% Dump or collect -25%";
+        if (aTitle) aTitle.firstChild.textContent = "Driver Shift & Compliance Log ";
+        if (aSub) aSub.textContent = "Recent collections and transfer runs recorded on your shift";
+        if (sTitle) sTitle.firstChild.textContent = "Factory-to-Factory Reuse Transfers ";
+      } else if (role === "tenant") {
+        const tenantName = activeUser?.scope_label ? activeUser.scope_label.split(" · ")[0] : "Factory";
+        if (bTitle) bTitle.firstChild.textContent = `Proprietary Factory Bins (${tenantName}) `;
+        if (bSub) bSub.textContent = "Real-time fill rates (% and kg) — click +25% Dump to simulate production scrap";
+        if (aTitle) aTitle.firstChild.textContent = `Factory Circular Transfer & Waste Log `;
+        if (aSub) aSub.textContent = "Audit trail of outbound transfers, inbound feedstocks adopted, and pickups for this factory";
+        if (sTitle) sTitle.firstChild.textContent = "Industrial Symbiosis: Reuse & Feedstock Exchange ";
+      } else {
+        // park_manager
+        if (qTitle) qTitle.firstChild.textContent = "Park Dispatch Oversight ";
+        if (qSub) qSub.textContent = "Macro park priority dispatch · Hazardous (solvent, oil) first, then oldest";
+        if (bTitle) bTitle.firstChild.textContent = "Factory Waste Bins (All 11 Bins Across Industrial Zones) ";
+        if (bSub) bSub.textContent = "Real-time status across industrial park zones (Zone A, B, C) · Click +25% Dump to simulate production scrap";
+        if (aTitle) aTitle.firstChild.textContent = "Certified Compliance Audit Trail ";
+        if (aSub) aSub.textContent = "Certified environmental audit trail for regulatory filings & ESG reporting";
+        if (sTitle) sTitle.firstChild.textContent = "Factory-to-Factory Reuse Transfers ";
+      }
     }
 
     function renderAll() {
@@ -1749,9 +1902,32 @@
     document.getElementById("viewTabs").addEventListener("click", (e) => {
       const btn = e.target.closest(".view-tab");
       if (!btn) return;
-      activeView = btn.dataset.view;
+      const targetRole = btn.dataset.view;
+      activeView = targetRole;
       document.querySelectorAll(".view-tab").forEach((t) => t.classList.toggle("active", t === btn));
+
+      // Synchronize active demo user if current user is of a different role
+      if (!activeUser || activeUser.role !== targetRole) {
+        const matchedUser = (state?.demo_users || []).find((u) => u.role === targetRole);
+        if (matchedUser) {
+          activeUser = matchedUser;
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(matchedUser));
+        }
+      }
+
+      if (targetRole === "tenant") {
+        if (activeUser?.tenant_id) {
+          tenantFilter = String(activeUser.tenant_id);
+        }
+        onlyMyMatches = true;
+      } else {
+        tenantFilter = "all";
+        onlyMyMatches = false;
+      }
       renderAll();
+      if (activeUser) {
+        showToast(`Switched view to ${activeUser.name} (${targetRole.replace("_", " ")})`);
+      }
     });
 
     document.getElementById("tenantFilter").addEventListener("change", (e) => {
