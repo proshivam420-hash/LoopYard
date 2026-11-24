@@ -184,11 +184,23 @@
       border-color: #78350F;
     }
 
+    @keyframes pulseDot {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.38;
+        transform: scale(0.82);
+      }
+    }
+
     .dot {
       width: 6px;
       height: 6px;
       border-radius: 50%;
       background: currentColor;
+      animation: pulseDot 2s ease-in-out infinite;
     }
 
     .hdr-btn {
@@ -201,10 +213,18 @@
       padding: 5px 10px;
       cursor: pointer;
       white-space: nowrap;
+      transition: transform 120ms ease, box-shadow 160ms ease, background-color 160ms ease, border-color 160ms ease;
+      user-select: none;
     }
 
     .hdr-btn:hover {
       background: #334155;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .hdr-btn:active {
+      transform: translateY(0) scale(0.97);
     }
 
     /* Persona Strip */
@@ -485,7 +505,10 @@
     }
 
     .prio-p1 { color: var(--crimson); font-weight: 700; font-size: 11px; white-space: nowrap; }
-    .prio-p1 .prio-dot { background: var(--crimson); }
+    .prio-p1 .prio-dot {
+      background: var(--crimson);
+      animation: pulseDot 1.6s ease-in-out infinite;
+    }
     .prio-p2 { color: var(--text-muted); font-weight: 600; font-size: 11px; white-space: nowrap; }
     .prio-p2 .prio-dot { background: var(--text-muted); }
 
@@ -500,11 +523,19 @@
       border-radius: 6px;
       cursor: pointer;
       white-space: nowrap;
-      transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
+      transition: transform 120ms ease, box-shadow 160ms ease, background-color 160ms ease, border-color 160ms ease;
+      user-select: none;
     }
 
     .btn:hover {
       background: var(--surface-subtle);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.08);
+    }
+
+    .btn:active {
+      transform: translateY(0) scale(0.97);
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
     }
 
     .btn-primary {
@@ -514,7 +545,9 @@
     }
 
     .btn-primary:hover {
-      filter: brightness(0.94);
+      background: #059669;
+      border-color: #059669;
+      box-shadow: 0 3px 8px rgba(16, 185, 129, 0.25);
     }
 
     .btn-soft-emerald {
@@ -525,7 +558,9 @@
 
     .btn-soft-emerald:hover {
       background: var(--emerald);
+      border-color: var(--emerald);
       color: #FFFFFF;
+      box-shadow: 0 3px 8px rgba(16, 185, 129, 0.2);
     }
 
     .action-group {
@@ -546,11 +581,17 @@
       border: 1px solid var(--border);
       border-left: 3px solid var(--blue);
       border-radius: 8px;
-      padding: 12px;
+      padding: 11px 12px;
       background: var(--surface);
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+
+    .bin-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
     }
 
     .bin-card.haz { border-left-color: var(--crimson); }
@@ -580,37 +621,94 @@
     .bin-metrics {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
+      align-items: center;
       gap: 6px;
-      white-space: nowrap;
+      min-width: 0;
+      margin: 2px 0 1px;
+    }
+
+    .bin-metric-left {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
     }
 
     .bin-pct {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
+      line-height: 1;
+    }
+
+    .bin-status-pill {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 1px 4px;
+      border-radius: 3px;
+      line-height: 1.2;
+    }
+
+    .pill-alert {
+      background: #FEE2E2;
+      color: #DC2626;
+      border: 1px solid #FECACA;
+    }
+
+    .pill-crit {
+      background: #DC2626;
+      color: #FFFFFF;
+    }
+
+    .pill-warn {
+      background: #FEF3C7;
+      color: #D97706;
+      border: 1px solid #FDE68A;
+    }
+
+    body.dark .pill-alert {
+      background: rgba(239, 68, 68, 0.25);
+      color: #F87171;
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    body.dark .pill-warn {
+      background: rgba(245, 158, 11, 0.25);
+      color: #FBBF24;
+      border-color: rgba(245, 158, 11, 0.4);
     }
 
     .bin-kg {
-      font-size: 11.5px;
+      font-size: 11px;
       color: var(--text-muted);
+      text-align: right;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .bar-track {
       height: 7px;
-      background: var(--surface-subtle);
+      background: #E2E8F0;
       border-radius: 999px;
       overflow: hidden;
+      position: relative;
+    }
+
+    body.dark .bar-track {
+      background: #334155;
     }
 
     .bar-fill {
       height: 100%;
       width: 0%;
-      background: var(--emerald);
-      transition: width 220ms ease;
+      border-radius: 999px;
+      background: #10B981;
+      transition: width 350ms cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .bar-fill.warn { background: var(--amber); }
-    .bar-fill.crit { background: var(--crimson); }
+    .bar-fill.warn { background: #F59E0B; }
+    .bar-fill.crit { background: #EF4444; }
 
     .bin-actions {
       display: flex;
@@ -625,6 +723,22 @@
       font-size: 11px;
     }
 
+    @keyframes flashRow {
+      0% {
+        background-color: var(--emerald-soft);
+      }
+      50% {
+        background-color: var(--emerald-soft);
+      }
+      100% {
+        background-color: transparent;
+      }
+    }
+
+    .flash-highlight {
+      animation: flashRow 1.4s ease-out;
+    }
+
     /* Factory-to-Factory Reuse Transfer Cards */
     .match-list {
       display: flex;
@@ -636,11 +750,18 @@
       border: 1px solid var(--border);
       border-left: 3px solid var(--emerald);
       border-radius: 8px;
-      padding: 11px 12px;
+      padding: 10px 12px;
       background: var(--surface);
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
+      min-width: 0;
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+
+    .match-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
     }
 
     .transfer-flow {
@@ -771,6 +892,12 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+
+    .user-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
     }
 
     .user-card.active-user {
@@ -1675,18 +1802,30 @@
       grid.innerHTML = filtered.map((b) => {
         const isAlert = b.fill_pct >= 80.0;
         const barClass = b.fill_pct >= 80.0 ? "crit" : (b.fill_pct >= 60.0 ? "warn" : "");
+        let statusTag = "";
+        if (b.fill_pct >= 100.0) {
+          statusTag = '<span class="bin-status-pill pill-crit">FULL</span>';
+        } else if (b.fill_pct >= 80.0) {
+          statusTag = '<span class="bin-status-pill pill-alert">≥80%</span>';
+        } else if (b.fill_pct >= 60.0) {
+          statusTag = '<span class="bin-status-pill pill-warn">HIGH</span>';
+        }
+
         return `
           <div class="bin-card ${b.is_hazardous ? "haz" : ""} ${isAlert ? "alert" : ""}">
             <div class="bin-top">
-              <div>
-                <div class="bin-factory">${b.tenant_name}</div>
+              <div style="min-width:0;overflow:hidden;">
+                <div class="bin-factory" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${b.tenant_name}">${b.tenant_name}</div>
                 <div class="bin-sub">${b.zone} · ${b.label}</div>
               </div>
               <span class="w-tag w-${b.waste_type}">${b.waste_type}</span>
             </div>
             <div class="bin-metrics">
-              <span class="bin-pct mono">${b.fill_pct.toFixed(1)}%${isAlert ? " · ≥80%" : ""}</span>
-              <span class="bin-kg mono">${b.est_kg.toFixed(1)} / ${b.capacity_kg.toFixed(0)} kg</span>
+              <div class="bin-metric-left">
+                <span class="bin-pct mono">${b.fill_pct.toFixed(1)}%</span>
+                ${statusTag}
+              </div>
+              <div class="bin-kg mono">${b.est_kg.toFixed(0)} / ${b.capacity_kg.toFixed(0)} kg</div>
             </div>
             <div class="bar-track">
               <div class="bar-fill ${barClass}" style="width:${Math.min(100, b.fill_pct)}%"></div>
@@ -1790,6 +1929,8 @@
       renderMatches();
     };
 
+    let lastRenderedLogId = null;
+
     function renderAudit() {
       const tbody = document.getElementById("auditBody");
       let logs = state.completed_log;
@@ -1805,8 +1946,12 @@
         return;
       }
 
-      tbody.innerHTML = logs.slice(0, 8).map((l) => `
-        <tr>
+      const topLogId = logs[0]?.id;
+      const isNewLog = lastRenderedLogId !== null && topLogId !== lastRenderedLogId;
+      lastRenderedLogId = topLogId;
+
+      tbody.innerHTML = logs.slice(0, 8).map((l, idx) => `
+        <tr class="${idx === 0 && isNewLog ? 'flash-highlight' : ''}">
           <td class="mono">#LOG-${l.id}</td>
           <td class="mono panel-meta">${(l.done_at || "").slice(11)}</td>
           <td><strong>${l.tenant_name}</strong></td>
