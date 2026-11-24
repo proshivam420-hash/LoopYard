@@ -2638,6 +2638,11 @@
       renderBins();
       renderComplianceLog();
       populateTenantFilter();
+      if (activeRole === 'collector') {
+        renderCollectorShift();
+      } else if (activeRole === 'tenant') {
+        renderTenantHistory();
+      }
     }
 
     function renderTelemetryStatus() {
@@ -2659,28 +2664,129 @@
       }
     }
 
+    let symbiosisMode = 'all'; // 'all' or 'tenant'
+
+    function setSymbiosisMode(mode) {
+      symbiosisMode = mode;
+      updateSymbiosisTabUI();
+      renderReuseMatches();
+    }
+
+    function updateSymbiosisTabUI() {
+      const btnTenant = document.getElementById('btnMatchTenant');
+      const btnAll = document.getElementById('btnMatchAll');
+      if (btnTenant) btnTenant.classList.toggle('active', symbiosisMode === 'tenant');
+      if (btnAll) btnAll.classList.toggle('active', symbiosisMode === 'all');
+    }
+
+    function getActiveTenantName() {
+      const user = getCurrentUser();
+      if (user && user.role && user.role.toLowerCase().includes('tenant') && user.scope) {
+        return user.scope;
+      }
+      const filterVal = document.getElementById('tenantFilter')?.value;
+      if (filterVal && filterVal !== 'all') return filterVal;
+      return 'AutoParts Co';
+    }
+
+    function quickSwitchPersonaRole(roleKey) {
+      let targetUser = null;
+      if (roleKey === 'manager') {
+        targetUser = demoUsers.find(u => u.role.toLowerCase().includes('manager')) || demoUsers[0];
+      } else if (roleKey === 'collector') {
+        targetUser = demoUsers.find(u => u.role.toLowerCase().includes('collector')) || demoUsers[1];
+      } else if (roleKey === 'tenant') {
+        targetUser = demoUsers.find(u => u.role.toLowerCase().includes('tenant')) || demoUsers[2];
+      }
+      if (targetUser) {
+        switchToUser(targetUser.id);
+      } else {
+        setRoleView(roleKey);
+      }
+    }
+
     function renderStats() {
       const im = appState.impact_metrics || {};
-      document.getElementById('statTotalKg').innerText = Number(im.total_kg_collected || 0).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
-      document.getElementById('statDivertedKg').innerText = `${Number(im.diverted_kg || 0).toLocaleString()} kg`;
-      document.getElementById('statLandfillKg').innerText = `${Number(im.landfill_kg || 0).toLocaleString()} kg`;
-      document.getElementById('statDiversionRate').innerText = Number(im.diversion_rate_pct || 0).toFixed(1);
-      document.getElementById('statCo2Avoided').innerText = Number(im.co2_avoided_kg || 0).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
-
       const pickups = appState.priority_pickups || [];
       const hazCount = pickups.filter(p => p.is_hazardous === 1).length;
       const stdCount = pickups.length - hazCount;
 
-      document.getElementById('statActivePickups').innerText = pickups.length;
-      document.getElementById('statHazardCount').innerText = `${hazCount} Hazardous`;
-      document.getElementById('statStandardCount').innerText = `${stdCount} Standard`;
+      // 1. Unified / Park Manager View KPIs
+      const elTotal = document.getElementById('statTotalKg');
+      if (elTotal) elTotal.innerText = Number(im.total_kg_collected || 0).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
+      const elDivKg = document.getElementById('statDivertedKg');
+      if (elDivKg) elDivKg.innerText = `${Number(im.diverted_kg || 0).toLocaleString()} kg`;
+      const elLandKg = document.getElementById('statLandfillKg');
+      if (elLandKg) elLandKg.innerText = `${Number(im.landfill_kg || 0).toLocaleString()} kg`;
+      const elDivRate = document.getElementById('statDiversionRate');
+      if (elDivRate) elDivRate.innerText = Number(im.diversion_rate_pct || 0).toFixed(1);
+      const elCo2 = document.getElementById('statCo2Avoided');
+      if (elCo2) elCo2.innerText = Number(im.co2_avoided_kg || 0).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
+
+      const elPickups = document.getElementById('statActivePickups');
+      if (elPickups) elPickups.innerText = pickups.length;
+      const elHaz = document.getElementById('statHazardCount');
+      if (elHaz) elHaz.innerText = `${hazCount} Hazardous`;
+      const elStd = document.getElementById('statStandardCount');
+      if (elStd) elStd.innerText = `${stdCount} Standard`;
 
       const alertCard = document.getElementById('kpiAlertCard');
-      if (pickups.length === 0) {
-        alertCard.classList.add('is-zero');
-      } else {
-        alertCard.classList.remove('is-zero');
+      if (alertCard) {
+        if (pickups.length === 0) alertCard.classList.add('is-zero');
+        else alertCard.classList.remove('is-zero');
       }
+
+      // 2. Collector Role KPIs
+      const colOpen = document.getElementById('colStatOpen');
+      if (colOpen) colOpen.innerText = pickups.length;
+      const colHaz = document.getElementById('colStatHazCount');
+      if (colHaz) colHaz.innerText = `${hazCount} Hazardous`;
+      const colStd = document.getElementById('colStatStdCount');
+      if (colStd) colStd.innerText = `${stdCount} Standard`;
+      const colP1 = document.getElementById('colStatP1Count');
+      if (colP1) colP1.innerText = hazCount;
+      const colWeight = document.getElementById('colStatWeight');
+      if (colWeight) colWeight.innerText = Number(im.total_kg_collected || 0).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
+
+      const user = getCurrentUser();
+      const colVehicle = document.getElementById('colStatVehicle');
+      const colZones = document.getElementById('colStatRouteZones');
+      if (user && user.role.toLowerCase().includes('collector')) {
+        const parts = user.scope.split('·');
+        if (colVehicle) colVehicle.innerText = parts[0]?.trim() || 'Truck #04';
+        if (colZones) colZones.innerText = parts[1]?.trim() || 'Zones A & B Express Dispatch';
+      } else {
+        if (colVehicle) colVehicle.innerText = 'Truck #04';
+        if (colZones) colZones.innerText = 'Zones A & B Express Dispatch';
+      }
+
+      // 3. Tenant Role KPIs
+      const activeTenantName = getActiveTenantName();
+      const tBins = (appState.bins || []).filter(b => b.tenant === activeTenantName);
+      const tenantBinsCount = document.getElementById('tenantStatBinsCount');
+      if (tenantBinsCount) tenantBinsCount.innerText = tBins.length;
+
+      const tenantFacName = document.getElementById('tenantStatFactoryName');
+      if (tenantFacName) {
+        const z = tBins[0]?.zone || 'Zone A';
+        tenantFacName.innerText = `${activeTenantName} · ${z}`;
+      }
+
+      const tStoredKg = tBins.reduce((sum, b) => sum + (Number(b.current_kg) || 0), 0);
+      const tenantStored = document.getElementById('tenantStatStoredKg');
+      if (tenantStored) tenantStored.innerText = tStoredKg.toFixed(1);
+
+      const tAvgFill = tBins.length > 0 ? (tBins.reduce((sum, b) => sum + (Number(b.fill_pct) || 0), 0) / tBins.length).toFixed(1) : '0.0';
+      const tenantAvgFill = document.getElementById('tenantStatAvgFill');
+      if (tenantAvgFill) tenantAvgFill.innerText = `${tAvgFill}%`;
+
+      const outboundMatches = (appState.reuse_matches || []).filter(m => m.source_tenant === activeTenantName);
+      const inboundMatches = (appState.reuse_matches || []).filter(m => m.target_tenant === activeTenantName);
+
+      const tenantOut = document.getElementById('tenantStatOutboundCount');
+      if (tenantOut) tenantOut.innerText = outboundMatches.length;
+      const tenantIn = document.getElementById('tenantStatInboundCount');
+      if (tenantIn) tenantIn.innerText = inboundMatches.length;
     }
 
     function renderPickupQueue() {
@@ -2737,7 +2843,7 @@
             <td style="text-align:right;">
               <div style="display:inline-flex; align-items:center; gap:6px;">
                 <button class="btn-action-partial" onclick="partialCollect(${p.bin_id}, 50)" title="Partially collect 50% from this bin">
-                  Partial (-50%)
+                  -50%
                 </button>
                 <button class="btn-action-collect" onclick="completePickup(${p.id})">
                   ✓ Mark Collected
@@ -2750,27 +2856,55 @@
     }
 
     function renderReuseMatches() {
-      const matches = appState.reuse_matches || [];
+      const allMatches = appState.reuse_matches || [];
       const container = document.getElementById('matchesList');
       const badge = document.getElementById('matchesBadge');
-      badge.innerText = `(${matches.length} Active)`;
+      const activeTenantName = getActiveTenantName();
 
-      if (matches.length === 0) {
-        container.innerHTML = `
-          <div style="text-align:center; color:var(--text-muted); padding:1.5rem; font-size:12px;">
-            No active peer-to-peer symbiosis matches. Bins must reach ≥ 30% fill to match neighboring input requirements.
-          </div>
-        `;
+      let displayedMatches = allMatches;
+      if (symbiosisMode === 'tenant' || activeRole === 'tenant') {
+        displayedMatches = allMatches.filter(m => m.source_tenant === activeTenantName || m.target_tenant === activeTenantName);
+      }
+
+      if (badge) badge.innerText = `(${displayedMatches.length} Active)`;
+      if (!container) return;
+
+      if (displayedMatches.length === 0) {
+        if (symbiosisMode === 'tenant' || activeRole === 'tenant') {
+          container.innerHTML = `
+            <div style="text-align:center; color:var(--text-muted); padding:2rem; font-size:12px;">
+              <div style="font-size:20px; margin-bottom:6px;">🌱</div>
+              <strong style="color:var(--text-primary);">No Active Exchanges for ${activeTenantName}</strong>
+              <div style="margin-top:4px; font-size:11px; line-height:1.4;">
+                Bins must reach ≥ 30% fill to match raw material input requirements.
+              </div>
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div style="text-align:center; color:var(--text-muted); padding:1.5rem; font-size:12px;">
+              No active peer-to-peer symbiosis matches. Bins must reach ≥ 30% fill to match neighboring input requirements.
+            </div>
+          `;
+        }
         return;
       }
 
-      container.innerHTML = matches.map(m => {
+      container.innerHTML = displayedMatches.map(m => {
         const styles = getWasteTypeStyles(m.waste_type);
-        const currentUser = getCurrentUser();
-        const isTenantFocus = activeRole === 'tenant' && currentUser && (m.source_tenant === currentUser.scope || m.target_tenant === currentUser.scope);
+        const isOutbound = m.source_tenant === activeTenantName;
+        const isInbound = m.target_tenant === activeTenantName;
+        const isFocused = (activeRole === 'tenant' || symbiosisMode === 'tenant') && (isOutbound || isInbound);
+
+        let typeBadge = '';
+        if (isOutbound) {
+          typeBadge = `<span style="margin-left:auto; font-size:10px; font-weight:700; color:var(--color-emerald); background:rgba(16,185,129,0.12); padding:2px 6px; border-radius:4px; border:1px solid rgba(16,185,129,0.25);">📤 OUTBOUND RESOURCE</span>`;
+        } else if (isInbound) {
+          typeBadge = `<span style="margin-left:auto; font-size:10px; font-weight:700; color:#0284c7; background:rgba(2,132,199,0.12); padding:2px 6px; border-radius:4px; border:1px solid rgba(2,132,199,0.25);">📥 INBOUND FEEDSTOCK</span>`;
+        }
 
         return `
-          <div class="match-item ${isTenantFocus ? 'tenant-highlight' : ''}" title="${m.narrative}">
+          <div class="match-item ${isFocused ? 'tenant-highlight' : ''}" title="${m.narrative}">
             <div class="match-p2p-route">
               <span class="route-node">🏭 ${m.source_tenant}</span>
               <span class="symbiosis-transfer-badge">→ Reuses ${m.available_kg} kg</span>
@@ -2779,9 +2913,126 @@
             <div class="match-payload">
               <span class="material-tag ${styles.tagClass}">${m.waste_type}</span>
               <span class="match-narrative-text">${m.narrative}</span>
-              ${isTenantFocus ? `<span style="margin-left:auto; font-size:10px; font-weight:700; color:var(--color-emerald); background:rgba(16,185,129,0.12); padding:2px 6px; border-radius:4px; border:1px solid rgba(16,185,129,0.25);">YOUR EXCHANGE</span>` : ''}
+              ${typeBadge}
             </div>
           </div>
+        `;
+      }).join('');
+    }
+
+    function renderCollectorShift() {
+      const spotlight = document.getElementById('collectorNextStopSpotlight');
+      const stopsList = document.getElementById('collectorRecentStopsList');
+      const stopsBadge = document.getElementById('shiftStopsCount');
+      const routeBadge = document.getElementById('collectorShiftRouteBadge');
+      const vehicleName = document.getElementById('shiftVehicleName');
+
+      const user = getCurrentUser();
+      const truckName = (user && user.role.toLowerCase().includes('collector')) ? user.scope : "Truck #04 · Zones A & B Express";
+      if (routeBadge) routeBadge.innerText = truckName;
+      if (vehicleName) vehicleName.innerText = truckName.split('·')[0].trim();
+
+      const pickups = appState.priority_pickups || [];
+      if (spotlight) {
+        if (pickups.length > 0) {
+          const top = pickups[0];
+          const isHaz = top.is_hazardous === 1;
+          const styles = getWasteTypeStyles(top.waste_type);
+          spotlight.innerHTML = `
+            <div style="border: 2px solid ${isHaz ? 'var(--color-crimson)' : 'var(--color-emerald)'}; background: ${isHaz ? 'var(--cat-hazard-bg)' : 'rgba(16,185,129,0.04)'}; border-radius: 6px; padding: 12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:${isHaz ? 'var(--color-crimson)' : 'var(--color-emerald)'};">
+                  ${isHaz ? '🚨 NEXT PRIORITY STOP (P1 HAZARDOUS)' : '⚡ NEXT PRIORITY STOP'}
+                </span>
+                <span class="font-mono" style="font-size:11px; font-weight:700;">#PK-${top.id}</span>
+              </div>
+              <div style="margin-top:6px; display:flex; justify-content:space-between; align-items:baseline;">
+                <div style="font-size:15px; font-weight:800; color:var(--text-primary);">
+                  🏭 ${top.tenant}
+                </div>
+                <span class="material-tag ${styles.tagClass}">${top.waste_type}</span>
+              </div>
+              <div class="font-mono" style="font-size:11px; color:var(--text-secondary); margin-top:2px;">
+                ${top.zone || 'Zone A'} · Bin #${top.bin_id} · Est. <strong>${top.current_kg} kg</strong> (${Math.round(top.fill_pct)}% fill)
+              </div>
+              <div style="margin-top:10px; display:flex; gap:8px;">
+                <button class="btn-action-collect" style="flex:1; padding:7px 10px; font-size:11px;" onclick="completePickup(${top.id})">
+                  ✓ Mark Stop Cleared
+                </button>
+                <button class="btn-action-partial" style="padding:7px 10px; font-size:11px;" onclick="partialCollect(${top.bin_id}, 50)">
+                  -50% Partial
+                </button>
+              </div>
+            </div>
+          `;
+        } else {
+          spotlight.innerHTML = `
+            <div style="border: 1px dashed var(--border-subtle); border-radius: 6px; padding: 16px; text-align:center; color:var(--text-muted); font-size:12px;">
+              <div style="font-size:20px; margin-bottom:4px;">✨</div>
+              <strong style="color:var(--text-primary);">All Park Bins Within Normal Fill Thresholds (&lt; 80%)</strong>
+              <div style="margin-top:3px; font-size:11px;">Truck #04 standing by for autonomous dispatch alerts.</div>
+            </div>
+          `;
+        }
+      }
+
+      const completedLogs = (appState.compliance_log || []).slice(0, 4);
+      if (stopsBadge) stopsBadge.innerText = `${completedLogs.length} recent cleared`;
+      if (stopsList) {
+        if (completedLogs.length === 0) {
+          stopsList.innerHTML = `<div style="font-size:11px; color:var(--text-muted); padding:6px 0;">No stops completed in this shift yet.</div>`;
+        } else {
+          stopsList.innerHTML = completedLogs.map(l => {
+            const styles = getWasteTypeStyles(l.waste_type);
+            return `
+              <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-canvas); border:1px solid var(--border-subtle); border-radius:4px; padding:6px 10px; font-size:11px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="material-tag ${styles.tagClass}" style="font-size:10px; padding:1px 6px;">${l.waste_type}</span>
+                  <span style="font-weight:600; color:var(--text-primary);">${l.tenant}</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="font-mono" style="font-weight:700; color:var(--color-emerald);">${l.kg_collected} kg</span>
+                  <span class="font-mono" style="color:var(--text-muted); font-size:10px;">${(l.done_time || '').split(' ')[1] || ''}</span>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    function renderTenantHistory() {
+      const activeTenantName = getActiveTenantName();
+      const logs = (appState.compliance_log || []).filter(l => l.tenant === activeTenantName);
+      const title = document.getElementById('tenantHistoryTitle');
+      const badge = document.getElementById('tenantHistoryBadge');
+      const tbody = document.getElementById('tenantHistoryBody');
+
+      if (title) title.innerText = `${activeTenantName} · Compliance History`;
+      if (badge) badge.innerText = `(${logs.length} Logged)`;
+      if (!tbody) return;
+
+      if (logs.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align:center; color:var(--text-muted); padding:1.5rem; font-size:12px;">
+              No completed pickups logged yet for ${activeTenantName}.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = logs.map(l => {
+        const styles = getWasteTypeStyles(l.waste_type);
+        return `
+          <tr>
+            <td class="font-mono" style="font-weight:700;">#AUD-${l.id}</td>
+            <td class="font-mono" style="color:var(--text-muted); font-size:11px;">${l.done_time || l.created_time}</td>
+            <td><span class="material-tag ${styles.tagClass}">${l.waste_type}</span></td>
+            <td class="font-mono" style="font-weight:700; color:var(--color-emerald);">${l.kg_collected} kg</td>
+            <td><span style="font-size:11px; font-weight:700; color:var(--color-emerald);">✓ VERIFIED</span></td>
+          </tr>
         `;
       }).join('');
     }
@@ -2909,26 +3160,72 @@
         btn.classList.toggle('active', btn.getAttribute('data-role') === role);
       });
 
+      // Update persona quick switch pills
+      const qManager = document.getElementById('quickPillManager');
+      const qCollector = document.getElementById('quickPillCollector');
+      const qTenant = document.getElementById('quickPillTenant');
+      if (qManager) qManager.classList.toggle('active', role === 'manager');
+      if (qCollector) qCollector.classList.toggle('active', role === 'collector');
+      if (qTenant) qTenant.classList.toggle('active', role === 'tenant');
+
       const kpi = document.getElementById('kpiStrip');
+      const colKpi = document.getElementById('collectorKpiStrip');
+      const tenKpi = document.getElementById('tenantKpiStrip');
       const queue = document.getElementById('panelQueue');
       const bins = document.getElementById('panelBins');
       const matches = document.getElementById('panelMatches');
       const compliance = document.getElementById('panelCompliance');
+      const colShift = document.getElementById('panelCollectorShift');
+      const tenHistory = document.getElementById('panelTenantHistory');
+      const tenantFilterWrap = document.getElementById('tenantFilterWrap');
 
-      [kpi, queue, bins, matches, compliance].forEach(el => el.classList.remove('hidden'));
+      // Hide all role-specific containers first
+      [kpi, colKpi, tenKpi, queue, bins, matches, compliance, colShift, tenHistory].forEach(el => {
+        if (el) el.classList.add('hidden');
+      });
 
-      if (role === 'manager') {
-        queue.classList.add('hidden');
-        matches.classList.add('hidden');
+      if (role === 'all') {
+        if (kpi) kpi.classList.remove('hidden');
+        if (queue) queue.classList.remove('hidden');
+        if (bins) bins.classList.remove('hidden');
+        if (matches) matches.classList.remove('hidden');
+        if (compliance) compliance.classList.remove('hidden');
+        if (tenantFilterWrap) tenantFilterWrap.style.display = 'flex';
+        symbiosisMode = 'all';
+        updateSymbiosisTabUI();
+      } else if (role === 'manager') {
+        if (kpi) kpi.classList.remove('hidden');
+        if (bins) bins.classList.remove('hidden');
+        if (compliance) compliance.classList.remove('hidden');
+        if (tenantFilterWrap) tenantFilterWrap.style.display = 'flex';
+        const filterSelect = document.getElementById('tenantFilter');
+        if (filterSelect) filterSelect.value = 'all';
       } else if (role === 'collector') {
-        kpi.classList.add('hidden');
-        matches.classList.add('hidden');
-        compliance.classList.add('hidden');
+        if (colKpi) colKpi.classList.remove('hidden');
+        if (queue) queue.classList.remove('hidden');
+        if (bins) bins.classList.remove('hidden');
+        if (colShift) colShift.classList.remove('hidden');
+        if (tenantFilterWrap) tenantFilterWrap.style.display = 'flex';
+        const filterSelect = document.getElementById('tenantFilter');
+        if (filterSelect) filterSelect.value = 'all';
+        renderCollectorShift();
       } else if (role === 'tenant') {
-        kpi.classList.add('hidden');
-        queue.classList.add('hidden');
-        compliance.classList.add('hidden');
+        if (tenKpi) tenKpi.classList.remove('hidden');
+        if (bins) bins.classList.remove('hidden');
+        if (tenHistory) tenHistory.classList.remove('hidden');
+        if (matches) matches.classList.remove('hidden');
+        if (tenantFilterWrap) tenantFilterWrap.style.display = 'none';
+        const activeTenantName = getActiveTenantName();
+        const filterSelect = document.getElementById('tenantFilter');
+        if (filterSelect) {
+          filterSelect.value = activeTenantName;
+        }
+        symbiosisMode = 'tenant';
+        updateSymbiosisTabUI();
+        renderTenantHistory();
       }
+
+      renderAll();
     }
 
     // Actions: Dump Waste (+25%)
@@ -3308,18 +3605,12 @@
       const user = getCurrentUser();
       if (!user) return;
 
-      const headerName = document.getElementById('headerUserName');
-      const headerRole = document.getElementById('headerUserRole');
+      const headerInitials = document.getElementById('headerUserInitials');
       const headerDot = document.getElementById('headerUserDot');
       const bannerAvatar = document.getElementById('bannerAvatarChip');
       const bannerName = document.getElementById('bannerUserName');
       const bannerRole = document.getElementById('bannerRolePill');
       const bannerScope = document.getElementById('bannerScopeText');
-
-      if (headerName) headerName.innerText = user.name;
-      if (headerRole) {
-        headerRole.innerText = user.role.replace('Park ', '');
-      }
 
       const initials = (user.name || 'Demo')
         .split(' ')
@@ -3327,14 +3618,16 @@
         .map(w => w[0].toUpperCase())
         .slice(0, 2)
         .join('');
+
+      if (headerInitials) headerInitials.innerText = initials;
       if (bannerAvatar) bannerAvatar.innerText = initials;
       if (bannerName) bannerName.innerText = user.name;
       if (bannerScope) bannerScope.innerText = user.scope;
 
+      const rLower = (user.role || '').toLowerCase();
       if (bannerRole) {
         bannerRole.innerText = user.role;
         bannerRole.className = 'persona-role-pill';
-        const rLower = (user.role || '').toLowerCase();
         if (rLower.includes('manager')) {
           bannerRole.classList.add('persona-role-manager');
           if (headerDot) headerDot.style.background = 'var(--color-emerald)';
@@ -3346,6 +3639,14 @@
           if (headerDot) headerDot.style.background = '#059669';
         }
       }
+
+      // Update persona quick switch pills active state
+      const qManager = document.getElementById('quickPillManager');
+      const qCollector = document.getElementById('quickPillCollector');
+      const qTenant = document.getElementById('quickPillTenant');
+      if (qManager) qManager.classList.toggle('active', rLower.includes('manager'));
+      if (qCollector) qCollector.classList.toggle('active', rLower.includes('collector'));
+      if (qTenant) qTenant.classList.toggle('active', rLower.includes('tenant'));
     }
 
     function switchToUser(userId, suppressToast = false) {
@@ -3359,29 +3660,13 @@
 
       // Adapt views based on role & scope
       const rLower = (user.role || '').toLowerCase();
-      const filterSelect = document.getElementById('tenantFilter');
 
       if (rLower.includes('manager')) {
         setRoleView('manager');
-        if (filterSelect) {
-          filterSelect.value = 'all';
-          renderBins();
-        }
       } else if (rLower.includes('collector')) {
         setRoleView('collector');
-        if (filterSelect) {
-          filterSelect.value = 'all';
-          renderBins();
-        }
       } else if (rLower.includes('tenant')) {
         setRoleView('tenant');
-        if (filterSelect) {
-          const matchingOption = Array.from(filterSelect.options).find(o => o.value === user.scope);
-          if (matchingOption) {
-            filterSelect.value = user.scope;
-          }
-          renderBins();
-        }
       }
 
       closeDemoShowcaseModal();

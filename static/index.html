@@ -1,0 +1,3886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoopYard — Industrial Symbiosis & Waste Dispatch OS</title>
+  
+  <!-- Modern B2B Typography: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* CSS Variables & B2B Design Tokens */
+    :root {
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+      /* Canvas & Surfaces */
+      --bg-canvas: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-hover: #f1f5f9;
+      --bg-subtle: #f8fafc;
+      --border-subtle: #e2e8f0;
+      --border-strong: #cbd5e1;
+      
+      --text-primary: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
+
+      /* Brand Accents */
+      --color-emerald: #059669;
+      --color-emerald-hover: #047857;
+      --color-emerald-subtle: #ecfdf5;
+      --color-emerald-border: #a7f3d0;
+      
+      --color-crimson: #dc2626;
+      --color-crimson-subtle: #fef2f2;
+      --color-crimson-border: #fecaca;
+      
+      --color-amber: #d97706;
+      --color-amber-subtle: #fffbeb;
+      --color-amber-border: #fde68a;
+
+      --color-cobalt: #2563eb;
+      --color-cobalt-subtle: #eff6ff;
+      --color-cobalt-border: #bfdbfe;
+
+      --color-teal: #0d9488;
+      --color-teal-dark: #0f766e;
+      --color-teal-subtle: #f0fdfa;
+      --color-teal-border: #99f6e4;
+
+      /* Category Specific Tags (Light Mode) */
+      --cat-hazard-bg: #fef2f2;
+      --cat-hazard-text: #b91c1c;
+      --cat-hazard-border: #fecaca;
+
+      --cat-metal-bg: #eff6ff;
+      --cat-metal-text: #1d4ed8;
+      --cat-metal-border: #bfdbfe;
+
+      --cat-plastic-bg: #f5f3ff;
+      --cat-plastic-text: #6d28d9;
+      --cat-plastic-border: #ddd6fe;
+
+      --cat-cardboard-bg: #fffbeb;
+      --cat-cardboard-text: #b45309;
+      --cat-cardboard-border: #fde68a;
+
+      --cat-organic-bg: #ecfdf5;
+      --cat-organic-text: #047857;
+      --cat-organic-border: #a7f3d0;
+
+      --cat-mixed-bg: #f1f5f9;
+      --cat-mixed-text: #475569;
+      --cat-mixed-border: #cbd5e1;
+
+      --card-radius: 8px;
+      --control-radius: 6px;
+      --transition-fast: 150ms ease;
+      --card-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.03);
+    }
+
+    /* Dark Theme (Neutral Zinc / Graphite with rich accents) */
+    html.dark {
+      --bg-canvas: #09090b;
+      --bg-surface: #121215;
+      --bg-surface-hover: #1c1c21;
+      --bg-subtle: #18181b;
+      --border-subtle: #27272a;
+      --border-strong: #3f3f46;
+
+      --text-primary: #fafafa;
+      --text-secondary: #e4e4e7;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
+
+      --color-emerald: #10b981;
+      --color-emerald-hover: #059669;
+      --color-emerald-subtle: rgba(16, 185, 129, 0.15);
+      --color-emerald-border: rgba(16, 185, 129, 0.35);
+
+      --color-crimson: #ef4444;
+      --color-crimson-subtle: rgba(239, 68, 68, 0.18);
+      --color-crimson-border: rgba(239, 68, 68, 0.4);
+
+      --color-amber: #f59e0b;
+      --color-amber-subtle: rgba(245, 158, 11, 0.18);
+      --color-amber-border: rgba(245, 158, 11, 0.4);
+
+      --color-cobalt: #3b82f6;
+      --color-cobalt-subtle: rgba(59, 130, 246, 0.18);
+      --color-cobalt-border: rgba(59, 130, 246, 0.4);
+
+      --color-teal: #14b8a6;
+      --color-teal-dark: #2dd4bf;
+      --color-teal-subtle: rgba(20, 184, 166, 0.18);
+      --color-teal-border: rgba(20, 184, 166, 0.4);
+
+      /* Category Specific Tags (Dark Mode) */
+      --cat-hazard-bg: rgba(239, 68, 68, 0.18);
+      --cat-hazard-text: #fca5a5;
+      --cat-hazard-border: rgba(239, 68, 68, 0.45);
+
+      --cat-metal-bg: rgba(59, 130, 246, 0.18);
+      --cat-metal-text: #93c5fd;
+      --cat-metal-border: rgba(59, 130, 246, 0.4);
+
+      --cat-plastic-bg: rgba(139, 92, 246, 0.18);
+      --cat-plastic-text: #c4b5fd;
+      --cat-plastic-border: rgba(139, 92, 246, 0.4);
+
+      --cat-cardboard-bg: rgba(245, 158, 11, 0.18);
+      --cat-cardboard-text: #fcd34d;
+      --cat-cardboard-border: rgba(245, 158, 11, 0.4);
+
+      --cat-organic-bg: rgba(16, 185, 129, 0.18);
+      --cat-organic-text: #6ee7b7;
+      --cat-organic-border: rgba(16, 185, 129, 0.4);
+
+      --cat-mixed-bg: rgba(100, 116, 139, 0.2);
+      --cat-mixed-text: #94a3b8;
+      --cat-mixed-border: rgba(100, 116, 139, 0.4);
+
+      --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Reset & Base Guard against horizontal overflow */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .num-tabular, .tabular {
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum";
+    }
+
+    .font-mono {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* -------------------------------------------------------------
+       1. Top Navigation Bar: High-Contrast Dark Anchor (#0F172A)
+    ------------------------------------------------------------- */
+    header {
+      min-height: 56px;
+      background-color: #0f172a;
+      border-bottom: 1px solid #1e293b;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      padding: 8px 1.5rem;
+      color: #ffffff;
+      width: 100%;
+    }
+
+    .header-inner {
+      width: 100%;
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .logo-mark {
+      width: 28px;
+      height: 28px;
+      background: #10b981;
+      color: #0f172a;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.35);
+      flex-shrink: 0;
+    }
+
+    .logo-mark svg {
+      width: 16px;
+      height: 16px;
+      fill: #ffffff;
+    }
+
+    .brand-text {
+      display: flex;
+      align-items: baseline;
+      gap: 0.4rem;
+      white-space: nowrap;
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+    }
+
+    .brand-sub {
+      font-size: 12px;
+      font-weight: 500;
+      color: #94a3b8;
+    }
+
+    /* Segmented Tab Control */
+    .role-tabs {
+      display: inline-flex;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: var(--control-radius);
+      padding: 2px;
+      gap: 2px;
+      flex-shrink: 0;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+
+    .role-tab-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 11px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .role-tab-btn:hover {
+      color: #ffffff;
+    }
+
+    .role-tab-btn.active {
+      background: #334155;
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+
+    /* Glowing Live Telemetry Pill */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border-radius: 9999px;
+      background: #064e3b;
+      border: 1px solid #059669;
+      color: #34d399;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      font-family: var(--font-mono);
+      white-space: nowrap;
+      flex-shrink: 0;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: #34d399;
+      box-shadow: 0 0 8px #34d399;
+      animation: pulse-dot 1.8s infinite ease-in-out;
+      flex-shrink: 0;
+    }
+
+    .status-pill.paused {
+      background: #451a03;
+      border-color: #d97706;
+      color: #fbbf24;
+      box-shadow: none;
+    }
+
+    .status-pill.paused .status-dot {
+      background-color: #fbbf24;
+      box-shadow: none;
+      animation: none;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.85); }
+    }
+
+    .btn-nav-control {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 9px;
+      border-radius: var(--control-radius);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-nav-control:hover {
+      background: #334155;
+      color: #ffffff;
+      border-color: #475569;
+    }
+
+    /* -------------------------------------------------------------
+       Collapsible Demo Walkthrough Bar (40px)
+    ------------------------------------------------------------- */
+    .demo-utility-bar {
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 6px 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-fast);
+      overflow-x: auto;
+      width: 100%;
+    }
+
+    .demo-utility-bar.collapsed {
+      display: none;
+    }
+
+    .demo-bar-inner {
+      width: 100%;
+      max-width: 1600px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: nowrap;
+      min-width: 0;
+    }
+
+    .demo-bar-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .demo-step-pills {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      min-width: 0;
+    }
+
+    .demo-step-pill {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all var(--transition-fast);
+    }
+
+    .demo-step-pill:hover {
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+      background: var(--bg-surface-hover);
+    }
+
+    .demo-step-pill strong {
+      color: var(--color-emerald);
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+
+    /* -------------------------------------------------------------
+       Main Content Layout (Safe min-width: 0 everywhere)
+    ------------------------------------------------------------- */
+    main {
+      width: 100%;
+      max-width: 1600px;
+      margin: 1.25rem auto;
+      padding: 0 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      min-width: 0;
+    }
+
+    /* -------------------------------------------------------------
+       KPI Stat Cards (Robust repeat minmax(0, 1fr) Grid)
+    ------------------------------------------------------------- */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .kpi-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--card-radius);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      position: relative;
+      overflow: hidden;
+      min-width: 0;
+      box-shadow: var(--card-shadow);
+      transition: border-color var(--transition-fast);
+    }
+
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+
+    .kpi-card.kpi-cobalt::before { background: var(--color-cobalt); }
+    .kpi-card.kpi-cobalt .kpi-val-text { color: var(--color-cobalt); }
+
+    .kpi-card.kpi-emerald::before { background: var(--color-emerald); }
+    .kpi-card.kpi-emerald .kpi-val-text { color: var(--color-emerald); }
+
+    .kpi-card.kpi-teal::before { background: var(--color-teal); }
+    .kpi-card.kpi-teal .kpi-val-text { color: var(--color-teal-dark); }
+
+    .kpi-card.kpi-alert::before { background: var(--color-crimson); }
+    .kpi-card.kpi-alert.is-zero::before { background: var(--border-strong); }
+
+    .kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .kpi-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+    }
+
+    .kpi-unit {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-muted);
+      margin-left: 2px;
+    }
+
+    .kpi-footer {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+    }
+
+    .kpi-footer a {
+      color: var(--color-teal);
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .kpi-footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* -------------------------------------------------------------
+       Asymmetric Operational Workspace (65% Left / 35% Right)
+    ------------------------------------------------------------- */
+    .workspace-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .workspace-col {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .panel-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--card-radius);
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .panel-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-surface);
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .panel-title-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .panel-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .panel-count {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .panel-note {
+      font-size: 11px;
+      color: var(--text-dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-shrink: 1;
+    }
+
+    /* -------------------------------------------------------------
+       Color-Coded Material Tags
+    ------------------------------------------------------------- */
+    .material-tag {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: capitalize;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .tag-hazard {
+      background: var(--cat-hazard-bg);
+      color: var(--cat-hazard-text);
+      border: 1px solid var(--cat-hazard-border);
+    }
+
+    .tag-metal {
+      background: var(--cat-metal-bg);
+      color: var(--cat-metal-text);
+      border: 1px solid var(--cat-metal-border);
+    }
+
+    .tag-plastic {
+      background: var(--cat-plastic-bg);
+      color: var(--cat-plastic-text);
+      border: 1px solid var(--cat-plastic-border);
+    }
+
+    .tag-cardboard {
+      background: var(--cat-cardboard-bg);
+      color: var(--cat-cardboard-text);
+      border: 1px solid var(--cat-cardboard-border);
+    }
+
+    .tag-organic {
+      background: var(--cat-organic-bg);
+      color: var(--cat-organic-text);
+      border: 1px solid var(--cat-organic-border);
+    }
+
+    .tag-mixed {
+      background: var(--cat-mixed-bg);
+      color: var(--cat-mixed-text);
+      border: 1px solid var(--cat-mixed-border);
+    }
+
+    /* -------------------------------------------------------------
+       Collector Dispatch Queue Table (Safely scrollable with Sticky Action Column)
+    ------------------------------------------------------------- */
+    .table-container {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      display: block;
+      position: relative;
+    }
+
+    table.data-table {
+      width: 100%;
+      min-width: 720px;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 12px;
+    }
+
+    table.data-table th {
+      padding: 10px 14px;
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    table.data-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    /* Pinned Sticky Action Column (Always Accessible without Horiz Scrolling) */
+    table.data-table th:last-child,
+    table.data-table td:last-child {
+      position: sticky;
+      right: 0;
+      background: var(--bg-surface);
+      z-index: 2;
+      box-shadow: -4px 0 8px rgba(0, 0, 0, 0.08);
+      text-align: right;
+    }
+
+    table.data-table th:last-child {
+      background: var(--bg-subtle);
+      z-index: 3;
+    }
+
+    table.data-table tbody tr:hover td {
+      background: var(--bg-surface-hover);
+    }
+
+    table.data-table tbody tr:hover td:last-child {
+      background: var(--bg-surface-hover);
+    }
+
+    /* P1 Hazardous Row with Soft Rose Tint and 3px Left Crimson Stripe */
+    table.data-table tbody tr.row-hazard {
+      border-left: 3px solid var(--color-crimson);
+    }
+
+    table.data-table tbody tr.row-hazard td {
+      background: var(--cat-hazard-bg);
+    }
+
+    table.data-table tbody tr.row-hazard td:last-child {
+      background: var(--cat-hazard-bg);
+    }
+
+    table.data-table tbody tr.row-hazard:hover td {
+      background: rgba(220, 38, 38, 0.1);
+    }
+
+    table.data-table tbody tr.row-hazard:hover td:last-child {
+      background: rgba(220, 38, 38, 0.12);
+    }
+
+    .priority-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+      min-width: 110px;
+    }
+
+    .priority-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .priority-hazard {
+      color: var(--color-crimson);
+    }
+    .priority-hazard .priority-dot {
+      background: var(--color-crimson);
+      box-shadow: 0 0 6px var(--color-crimson);
+    }
+
+    .priority-standard {
+      color: var(--text-muted);
+    }
+    .priority-standard .priority-dot {
+      background: var(--text-dim);
+    }
+
+    .inline-progress {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 110px;
+    }
+
+    .inline-progress-track {
+      flex: 1;
+      height: 6px;
+      background: var(--border-subtle);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .inline-progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width var(--transition-fast);
+    }
+
+    /* Solid Emerald Mark Collected Button */
+    .btn-action-collect {
+      background: var(--color-emerald);
+      border: 1px solid var(--color-emerald);
+      color: #ffffff;
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: var(--control-radius);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all var(--transition-fast);
+      box-shadow: 0 1px 2px rgba(5, 150, 105, 0.2);
+    }
+
+    .btn-action-collect:hover {
+      background: var(--color-emerald-hover);
+      border-color: var(--color-emerald-hover);
+      transform: translateY(-1px);
+    }
+
+    /* -------------------------------------------------------------
+       Smart Bins Telemetry Grid (Thick 8px Fill Bars & Overflow-Safe)
+    ------------------------------------------------------------- */
+    .bins-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+      padding: 16px;
+      min-width: 0;
+    }
+
+    .bin-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--card-radius);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      transition: border-color var(--transition-fast), background-color var(--transition-fast);
+      border-left-width: 3px;
+      border-left-style: solid;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .bin-card:hover {
+      border-color: var(--border-strong);
+    }
+
+    .bin-card.border-cat-hazard { border-left-color: var(--color-crimson); }
+    .bin-card.border-cat-metal { border-left-color: var(--color-cobalt); }
+    .bin-card.border-cat-plastic { border-left-color: #8b5cf6; }
+    .bin-card.border-cat-cardboard { border-left-color: var(--color-amber); }
+    .bin-card.border-cat-organic { border-left-color: var(--color-emerald); }
+    .bin-card.border-cat-mixed { border-left-color: var(--text-dim); }
+
+    .bin-card.is-critical {
+      border-color: var(--color-crimson);
+      background: var(--cat-hazard-bg);
+    }
+
+    .bin-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .bin-factory-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.25;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .bin-submeta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      white-space: nowrap;
+    }
+
+    .bin-progress-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .bin-progress-readout {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 11px;
+      min-width: 0;
+      gap: 6px;
+    }
+
+    .bin-pct-big {
+      font-family: var(--font-mono);
+      font-size: 17px;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .bin-status-tag {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 3px;
+      margin-left: 4px;
+      text-transform: uppercase;
+    }
+
+    .bin-weight-dim {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: right;
+    }
+
+    /* 8px Thick Progress Bar */
+    .bin-progress-track {
+      width: 100%;
+      height: 8px;
+      background: var(--border-subtle);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .bin-progress-bar {
+      height: 100%;
+      border-radius: 4px;
+      background: #10b981;
+      transition: width var(--transition-fast), background-color var(--transition-fast);
+    }
+
+    .bin-progress-bar.bar-amber {
+      background: #f59e0b;
+    }
+
+    .bin-progress-bar.bar-crimson {
+      background: #ef4444;
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+    }
+
+    .bin-footer-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-top: 2px;
+    }
+
+    .btn-dump-subtle {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-dump-subtle:hover {
+      background: #0f172a;
+      border-color: #0f172a;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .btn-dump-subtle.btn-dump-hazard:hover {
+      background: #dc2626;
+      border-color: #dc2626;
+      color: #ffffff;
+    }
+
+    html.dark .btn-dump-subtle:hover {
+      background: #27272a;
+      border-color: #3f3f46;
+      color: #fafafa;
+    }
+
+    /* Partial Collection Buttons */
+    .btn-collect-subtle {
+      background: var(--color-emerald-subtle);
+      border: 1px solid var(--color-emerald-border);
+      color: var(--color-emerald);
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 9px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-collect-subtle:hover {
+      background: var(--color-emerald);
+      border-color: var(--color-emerald);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .btn-action-partial {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 9px;
+      border-radius: var(--control-radius);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-action-partial:hover {
+      background: var(--color-emerald-subtle);
+      border-color: var(--color-emerald-border);
+      color: var(--color-emerald);
+      transform: translateY(-1px);
+    }
+
+    /* -------------------------------------------------------------
+       Symbiosis Matches (Compact, Non-Clipping P2P Cards)
+    ------------------------------------------------------------- */
+    .matches-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px;
+      max-height: 480px;
+      overflow-y: auto;
+      min-width: 0;
+    }
+
+    .match-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--card-radius);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      min-width: 0;
+      overflow: hidden;
+      transition: border-color var(--transition-fast);
+    }
+
+    .match-item:hover {
+      border-color: var(--border-strong);
+    }
+
+    .match-p2p-route {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      font-size: 11px;
+      min-width: 0;
+    }
+
+    .route-node {
+      font-weight: 700;
+      color: var(--text-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .route-node.text-right {
+      text-align: right;
+    }
+
+    .symbiosis-transfer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--color-emerald-subtle);
+      border: 1px solid var(--color-emerald-border);
+      color: var(--color-emerald);
+      padding: 2px 7px;
+      border-radius: 9999px;
+      font-size: 10px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .match-payload {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      min-width: 0;
+    }
+
+    .match-narrative-text {
+      color: var(--text-muted);
+      font-size: 11px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+      flex: 1;
+    }
+
+    /* Compliance Table Container */
+    .compliance-scroll {
+      max-height: 380px;
+      overflow-y: auto;
+      min-width: 0;
+    }
+
+    /* -------------------------------------------------------------
+       Modal & Toast Feedback
+    ------------------------------------------------------------- */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(2px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--card-radius);
+      width: 90%;
+      max-width: 560px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-head h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .btn-close-modal {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: calc(100vw - 40px);
+    }
+
+    .toast-msg {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 8px 12px;
+      border-radius: var(--control-radius);
+      font-size: 12px;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-left: 3px solid var(--color-emerald);
+      animation: toastIn 150ms ease-out;
+      word-break: break-word;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* -------------------------------------------------------------
+       Responsive Breakpoints (Desktop >= 1200, Tablet 768-1199, Mobile < 768)
+    ------------------------------------------------------------- */
+    @media (max-width: 1199px) {
+      .workspace-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .bins-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      }
+    }
+
+    @media (max-width: 767px) {
+      header {
+        padding: 8px 1rem;
+      }
+      .header-inner {
+        gap: 0.5rem;
+      }
+      .brand-sub {
+        display: none;
+      }
+      main {
+        padding: 0 0.75rem;
+        margin: 1rem auto;
+      }
+      .kpi-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .bins-grid {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 12px;
+      }
+      .btn-nav-control, .btn-dump-subtle, .btn-action-collect {
+        min-height: 36px;
+      }
+    }
+
+    /* -------------------------------------------------------------
+       Demo Sign-Up & Evaluator Persona Showcase Styles
+    ------------------------------------------------------------- */
+    .btn-nav-profile {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #f8fafc;
+      border-radius: var(--control-radius);
+      cursor: pointer;
+      transition: all 120ms ease;
+      white-space: nowrap;
+    }
+    .btn-nav-profile:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.28);
+    }
+    .user-avatar-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--color-emerald);
+      box-shadow: 0 0 6px var(--color-emerald);
+      flex-shrink: 0;
+    }
+    .user-role-badge {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 8px;
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .persona-context-banner {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      min-height: 40px;
+      padding: 4px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      transition: all 150ms ease;
+    }
+    .persona-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .persona-avatar-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #eff6ff;
+      color: #2563eb;
+      font-weight: 700;
+      font-size: 11px;
+      border: 1px solid #bfdbfe;
+      flex-shrink: 0;
+    }
+    html.dark .persona-avatar-chip {
+      background: #1e293b;
+      color: #60a5fa;
+      border-color: #3b82f6;
+    }
+    .persona-name-text {
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .persona-role-pill {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .persona-role-manager {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+    html.dark .persona-role-manager {
+      background: #1e3a8a;
+      color: #93c5fd;
+      border-color: #3b82f6;
+    }
+    .persona-role-collector {
+      background: #fff7ed;
+      color: #c2410c;
+      border: 1px solid #fed7aa;
+    }
+    html.dark .persona-role-collector {
+      background: #7c2d12;
+      color: #fdba74;
+      border-color: #ea580c;
+    }
+    .persona-role-tenant {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+    html.dark .persona-role-tenant {
+      background: #064e3b;
+      color: #6ee7b7;
+      border-color: #10b981;
+    }
+    .persona-scope-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--bg-canvas);
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
+      font-family: inherit;
+    }
+    .persona-quick-pill {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 120ms ease;
+      white-space: nowrap;
+    }
+    .persona-quick-pill:hover {
+      border-color: var(--color-emerald);
+      color: var(--color-emerald);
+    }
+    .persona-quick-pill.active {
+      border-color: var(--color-emerald);
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--color-emerald);
+    }
+    .symbiosis-toggle-wrap {
+      display: inline-flex;
+      align-items: center;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 2px;
+      gap: 2px;
+    }
+    .symbiosis-tab-btn {
+      background: transparent;
+      border: none;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 3px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 120ms ease;
+      white-space: nowrap;
+    }
+    .symbiosis-tab-btn:hover {
+      color: var(--text-primary);
+    }
+    .symbiosis-tab-btn.active {
+      background: var(--bg-surface);
+      color: var(--color-emerald);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    #panelBins {
+      height: fit-content;
+    }
+    .demo-badge-disclaimer {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(234, 88, 12, 0.1);
+      color: #ea580c;
+      border: 1px solid rgba(234, 88, 12, 0.25);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    html.dark .demo-badge-disclaimer {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+    }
+
+    .modal-box-wide {
+      max-width: 860px;
+      width: 95%;
+    }
+    .demo-grid-profiles {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .profile-card {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--card-radius);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 120ms ease;
+    }
+    .profile-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .profile-card.active-profile {
+      border: 2px solid var(--color-emerald);
+      background: rgba(16, 185, 129, 0.04);
+    }
+    .profile-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .profile-meta-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+    .profile-meta-scope {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .profile-stats-summary {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 8px 10px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+    .profile-switch-btn {
+      margin-top: auto;
+      width: 100%;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 120ms ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .profile-switch-btn.btn-current {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #10b981;
+      cursor: default;
+    }
+    html.dark .profile-switch-btn.btn-current {
+      background: #064e3b;
+      color: #6ee7b7;
+      border-color: #059669;
+    }
+    .signup-form-card {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--card-radius);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .preset-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+    .preset-pill-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      font-size: 11px;
+      color: var(--text-secondary);
+      padding: 4px 9px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 100ms ease;
+    }
+    .preset-pill-btn:hover {
+      border-color: var(--color-emerald);
+      color: var(--color-emerald);
+    }
+    .signup-form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .form-group label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .form-input {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      font-size: 12px;
+      padding: 7px 10px;
+      border-radius: 4px;
+      font-family: inherit;
+      outline: none;
+    }
+    .form-input:focus {
+      border-color: var(--color-emerald);
+    }
+    .match-item.tenant-highlight {
+      border: 1px solid var(--color-emerald) !important;
+      background: rgba(16, 185, 129, 0.05);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar (High-Contrast Anchor #0F172A) -->
+  <header>
+    <div class="header-inner">
+      <div class="header-left">
+        <div class="logo-mark" title="LoopYard Engine">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">LoopYard</span>
+          <span class="brand-sub">/ Industrial Symbiosis OS</span>
+        </div>
+      </div>
+
+      <!-- Segmented Role Control -->
+      <div class="role-tabs">
+        <button class="role-tab-btn active" data-role="all" onclick="setRoleView('all')">Unified View</button>
+        <button class="role-tab-btn" data-role="manager" onclick="setRoleView('manager')">Park Manager</button>
+        <button class="role-tab-btn" data-role="collector" onclick="setRoleView('collector')">Collector</button>
+        <button class="role-tab-btn" data-role="tenant" onclick="setRoleView('tenant')">Tenant</button>
+      </div>
+
+      <!-- Right Actions: Glowing Live Telemetry Pill -->
+      <div class="header-right">
+        <!-- Demo Persona Profile Switcher -->
+        <button class="btn-nav-control btn-nav-profile" id="currentProfileBtn" onclick="openDemoShowcaseModal()" title="Switch Persona / Evaluator Showcase">
+          <span class="user-avatar-dot" id="headerUserDot"></span>
+          <span id="headerUserInitials" style="font-weight:700; font-size:11px; letter-spacing:0.02em;">EV</span>
+          <span style="font-size:9px; opacity:0.7;">▾</span>
+        </button>
+
+        <div class="status-pill" id="telemetryPill" title="Telemetry cycle: 3s">
+          <div class="status-dot"></div>
+          <span id="telemetryStatusText">● Live · 3s</span>
+        </div>
+
+        <button class="btn-nav-control" onclick="toggleSimulation()" title="Pause/Resume live IoT telemetry">
+          <span id="btnSimIcon">⏸</span> <span id="btnSimText">Pause</span>
+        </button>
+
+        <button class="btn-nav-control" onclick="reseedDatabase()" title="Reset demo seed state">
+          ↺ Reset
+        </button>
+
+        <button class="btn-nav-control" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Dark / Light Mode">
+          <span id="themeIcon">🌙</span>
+        </button>
+
+        <button class="btn-nav-control" onclick="toggleDemoBar()" title="Toggle 2-Minute Demo Walkthrough Bar">
+          <span>? Demo Guide</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Collapsible 40px Demo Walkthrough Bar -->
+  <div class="demo-utility-bar collapsed" id="demoUtilityBar">
+    <div class="demo-bar-inner">
+      <div class="demo-bar-label">
+        <span>⚡ 2-Minute Evaluator Script:</span>
+      </div>
+      <div class="demo-step-pills">
+        <button class="demo-step-pill" style="border-color:var(--color-emerald); background:rgba(16,185,129,0.12); color:var(--color-emerald);" onclick="openDemoShowcaseModal()">
+          <strong>👤</strong> Personas & Roles
+        </button>
+        <button class="demo-step-pill" onclick="runDemoStep(1)">
+          <strong>1</strong> Overview Telemetry
+        </button>
+        <button class="demo-step-pill" onclick="runDemoStep(2)">
+          <strong>2</strong> +25% Dump Solvent
+        </button>
+        <button class="demo-step-pill" onclick="runDemoStep(3)">
+          <strong>3</strong> View P1 Hazardous
+        </button>
+        <button class="demo-step-pill" onclick="runDemoStep(4)">
+          <strong>4</strong> Collect & Audit
+        </button>
+        <button class="demo-step-pill" onclick="runDemoStep(5)">
+          <strong>5</strong> Symbiosis Match
+        </button>
+        <button class="demo-step-pill" onclick="runDemoStep(6)">
+          <strong>6</strong> Metric Impact
+        </button>
+      </div>
+      <button class="btn-nav-control" style="padding:2px 6px; font-size:11px;" onclick="toggleDemoBar()">Dismiss</button>
+    </div>
+  </div>
+
+  <!-- Evaluator Persona Contextual Status Banner -->
+  <div class="persona-context-banner" id="personaContextBanner">
+    <div class="persona-left">
+      <div class="persona-avatar-chip" id="bannerAvatarChip">EV</div>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <span style="color:var(--text-muted); font-size:11px;">Active:</span>
+        <span class="persona-name-text" id="bannerUserName">Elena Vance</span>
+      </div>
+      <span class="persona-role-pill persona-role-manager" id="bannerRolePill">Park Manager</span>
+      <span class="persona-scope-tag" id="bannerScopeTag">
+        <span>📍</span> <span id="bannerScopeText">Park-Wide Administration</span>
+      </span>
+    </div>
+    <div class="persona-right" style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+      <span style="font-size:11px; color:var(--text-muted); margin-right:2px;">Switch:</span>
+      <button class="persona-quick-pill active" id="quickPillManager" onclick="quickSwitchPersonaRole('manager')" title="Switch to Park Manager (Elena Vance)">🏛️ Park Manager</button>
+      <button class="persona-quick-pill" id="quickPillCollector" onclick="quickSwitchPersonaRole('collector')" title="Switch to Collector (Marcus Chen)">🚛 Collector</button>
+      <button class="persona-quick-pill" id="quickPillTenant" onclick="quickSwitchPersonaRole('tenant')" title="Switch to Tenant (Priya Sharma)">🏭 Tenant</button>
+      <button class="btn-action-collect" style="padding:3px 9px; font-size:11px; margin-left:4px;" onclick="openDemoShowcaseModal()">
+        + Sign Up
+      </button>
+    </div>
+  </div>
+
+  <main>
+    <!-- Top KPI Metric Strip (Unified & Park Manager) -->
+    <section class="kpi-grid" id="kpiStrip">
+      <!-- 1. Total Waste Collected (Deep Cobalt Blue #2563EB) -->
+      <div class="kpi-card kpi-cobalt">
+        <div class="kpi-header">
+          <span class="kpi-title">Total Waste Collected</span>
+        </div>
+        <div class="kpi-value font-mono kpi-val-text">
+          <span id="statTotalKg">1,405.0</span><span class="kpi-unit">kg</span>
+        </div>
+        <div class="kpi-footer font-mono">
+          <span>Diverted: <strong id="statDivertedKg" style="color:var(--color-emerald)">1,195.0 kg</strong></span>
+          <span>·</span>
+          <span>Landfill: <strong id="statLandfillKg">210.0 kg</strong></span>
+        </div>
+      </div>
+
+      <!-- 2. Landfill Diversion Rate (Vibrant Emerald #059669) -->
+      <div class="kpi-card kpi-emerald">
+        <div class="kpi-header">
+          <span class="kpi-title">Landfill Diversion Rate</span>
+        </div>
+        <div class="kpi-value font-mono kpi-val-text">
+          <span id="statDiversionRate">85.1</span><span class="kpi-unit">%</span>
+        </div>
+        <div class="kpi-footer">
+          <span>Non-mixed streams diverted from landfill</span>
+        </div>
+      </div>
+
+      <!-- 3. Estimated CO2 Avoided (Teal / Cyan #0D9488) -->
+      <div class="kpi-card kpi-teal">
+        <div class="kpi-header">
+          <span class="kpi-title">Estimated CO₂ Avoided</span>
+        </div>
+        <div class="kpi-value font-mono kpi-val-text">
+          <span id="statCo2Avoided">2,034.0</span><span class="kpi-unit">kg CO₂e</span>
+        </div>
+        <div class="kpi-footer">
+          <a onclick="openCo2Modal()">ⓘ Lifecycle conversion factors</a>
+        </div>
+      </div>
+
+      <!-- 4. Active Dispatch Pickups (Warm Amber / Crimson #EA580C / #DC2626) -->
+      <div class="kpi-card kpi-alert" id="kpiAlertCard">
+        <div class="kpi-header">
+          <span class="kpi-title">Active Dispatch Pickups</span>
+        </div>
+        <div class="kpi-value font-mono">
+          <span id="statActivePickups">0</span><span class="kpi-unit">tasks</span>
+        </div>
+        <div class="kpi-footer font-mono">
+          <span id="statHazardCount" style="color:var(--color-crimson); font-weight:700;">0 Hazardous</span>
+          <span>·</span>
+          <span id="statStandardCount">0 Standard</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Collector Role 4-Card KPI Strip -->
+    <section class="kpi-grid hidden" id="collectorKpiStrip">
+      <!-- 1. Open Pickups in Queue (Deep Cobalt Blue #2563EB) -->
+      <div class="kpi-card kpi-cobalt">
+        <div class="kpi-header">
+          <span class="kpi-title">Open Pickups in Queue</span>
+        </div>
+        <div class="kpi-value font-mono kpi-val-text">
+          <span id="colStatOpen">0</span><span class="kpi-unit">Tasks</span>
+        </div>
+        <div class="kpi-footer font-mono">
+          <span id="colStatHazCount" style="color:var(--color-crimson); font-weight:700;">0 Hazardous</span>
+          <span>·</span>
+          <span id="colStatStdCount">0 Standard</span>
+        </div>
+      </div>
+
+      <!-- 2. Hazardous P1 Tasks (Safety Crimson #DC2626) -->
+      <div class="kpi-card" style="border-top: 3px solid var(--color-crimson);">
+        <div class="kpi-header">
+          <span class="kpi-title">Hazardous P1 Critical</span>
+        </div>
+        <div class="kpi-value font-mono kpi-val-text" style="color:var(--color-crimson);">
+          <span id="colStatP1Count">0</span><span class="kpi-unit" style="color:var(--text-muted);">Alerts</span>
+        </div>
+        <div class="kpi-footer">
+          <span>Auto-pinned to top of dispatch manifest</span>
+        </div>
+      </div>
+
+      <!-- 3. Total Weight Collected Today (Vibrant Emerald #059669) -->
+      <div class="kpi-card kpi-emerald">
+        <div class="kpi-header">
+          <span class="kpi-title">Total Weight Diverted</span>
+        </div>
+        <div class="kpi-value font-mono kpi-val-text">
+          <span id="colStatWeight">1,405.0</span><span class="kpi-unit">kg</span>
+        </div>
+        <div class="kpi-footer font-mono">
+          <span>Certified closed-loop reclamation</span>
+        </div>
+      </div>
+
+      <!-- 4. Assigned Route / Truck (Warm Amber #EA580C) -->
+      <div class="kpi-card" style="border-top: 3px solid var(--color-amber);">
+        <div class="kpi-header">
+          <span class="kpi-title">Assigned Route & Vehicle</span>
+        </div>
+        <div class="kpi-value font-mono kpi-val-text" style="font-size:22px; color:var(--color-amber);">
+          <span id="colStatVehicle">Truck #04</span>
+        </div>
+        <div class="kpi-footer font-mono">
+          <span id="colStatRouteZones">Zones A & B Express Dispatch</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tenant Role 4-Card KPI Strip -->
+    <section class="kpi-grid hidden" id="tenantKpiStrip">
+      <!-- 1. Active Factory Bins (Cobalt Blue #2563EB) -->
+      <div class="kpi-card kpi-cobalt">
+        <div class="kpi-header">
+          <span class="kpi-title">Active Factory Bins</span>
+        </div>
+        <div class="kpi-value font-mono kpi-val-text">
+          <span id="tenantStatBinsCount">2</span><span class="kpi-unit">Bins</span>
+        </div>
+        <div class="kpi-footer font-mono">
+          <span id="tenantStatFactoryName">AutoParts Co · Zone A</span>
+        </div>
+      </div>
+
+      <!-- 2. Current Stored Waste (kg) (Sky Blue #0284C7) -->
+      <div class="kpi-card" style="border-top: 3px solid #0284c7;">
+        <div class="kpi-header">
+          <span class="kpi-title">Current Stored Waste</span>
+        </div>
+        <div class="kpi-value font-mono kpi-val-text" style="color:#0284c7;">
+          <span id="tenantStatStoredKg">345.0</span><span class="kpi-unit">kg</span>
+        </div>
+        <div class="kpi-footer font-mono">
+          <span>Avg Fill Level: <strong id="tenantStatAvgFill" style="color:var(--color-emerald);">52.5%</strong></span>
+        </div>
+      </div>
+
+      <!-- 3. Outbound Reuse Matches (Vibrant Emerald #059669) -->
+      <div class="kpi-card kpi-emerald">
+        <div class="kpi-header">
+          <span class="kpi-title">Outbound Reuse Matches</span>
+        </div>
+        <div class="kpi-value font-mono kpi-val-text">
+          <span id="tenantStatOutboundCount">2</span><span class="kpi-unit">Offers</span>
+        </div>
+        <div class="kpi-footer">
+          <span>Byproducts reused by peer factories</span>
+        </div>
+      </div>
+
+      <!-- 4. Inbound Material Offers (Teal #0D9488) -->
+      <div class="kpi-card kpi-teal">
+        <div class="kpi-header">
+          <span class="kpi-title">Inbound Material Offers</span>
+        </div>
+        <div class="kpi-value font-mono kpi-val-text">
+          <span id="tenantStatInboundCount">3</span><span class="kpi-unit">Streams</span>
+        </div>
+        <div class="kpi-footer">
+          <span>Matching factory raw material inputs</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Operational Asymmetric Workspace (65% Left / 35% Right) -->
+    <div class="workspace-layout">
+      
+      <!-- Left Column (65%): Dispatch Queue, Live Bins Telemetry, & Tenant History -->
+      <div class="workspace-col" id="colLeft">
+        
+        <!-- 1. Collector Priority Dispatch Queue -->
+        <section class="panel-card" id="panelQueue">
+          <div class="panel-header">
+            <div class="panel-title-wrap">
+              <span class="panel-title">Collector Priority Dispatch Queue</span>
+              <span class="panel-count" id="queueBadge">(0 Open)</span>
+            </div>
+            <div class="panel-note">
+              Hazardous tasks auto-pinned to top · Auto-dispatched at ≥ 80% fill
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Priority</th>
+                  <th>Task ID</th>
+                  <th>Bin</th>
+                  <th>Factory / Tenant</th>
+                  <th>Material</th>
+                  <th>Est. Weight</th>
+                  <th>Fill Level</th>
+                  <th>Created</th>
+                  <th style="text-align:right;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="pickupQueueBody">
+                <tr>
+                  <td colspan="9" style="text-align:center; color:var(--text-muted); padding:2rem;">
+                    No active pickups in queue. Bins generate dispatch tasks at ≥ 80% fill.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 2. Live Smart Bin Telemetry Grid -->
+        <section class="panel-card" id="panelBins">
+          <div class="panel-header">
+            <div class="panel-title-wrap">
+              <span class="panel-title">Live Smart Bin Telemetry</span>
+              <span class="panel-count" id="binsBadge">(11 Monitored)</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;" id="tenantFilterWrap">
+              <label style="font-size:11px; color:var(--text-muted); font-weight:500;">Filter:</label>
+              <select id="tenantFilter" onchange="renderBins()" style="background:var(--bg-surface); color:var(--text-primary); border:1px solid var(--border-subtle); border-radius:4px; padding:3px 6px; font-size:11px; font-family:var(--font-sans);">
+                <option value="all">All Tenants (6)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="bins-grid" id="binsGrid">
+            <!-- Dynamic smart bin cards -->
+          </div>
+        </section>
+
+        <!-- 3. Factory Compliance & Pickup History (Tenant View) -->
+        <section class="panel-card hidden" id="panelTenantHistory">
+          <div class="panel-header">
+            <div class="panel-title-wrap">
+              <span class="panel-title" id="tenantHistoryTitle">Factory Compliance & Pickup History</span>
+              <span class="panel-count" id="tenantHistoryBadge">(0 Logged)</span>
+            </div>
+            <div class="panel-note">
+              Certified Manifests for Factory
+            </div>
+          </div>
+          <div class="table-container compliance-scroll">
+            <table class="data-table" style="min-width: 440px;">
+              <thead>
+                <tr>
+                  <th>Log ID</th>
+                  <th>Completed</th>
+                  <th>Material</th>
+                  <th>Net Weight</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="tenantHistoryBody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Right Column (35%): Symbiosis Matches, Driver Shift Manifest, & Compliance Audit Trail -->
+      <div class="workspace-col" id="colRight">
+        
+        <!-- 0. Driver Shift & Route Manifest (Collector View) -->
+        <section class="panel-card hidden" id="panelCollectorShift">
+          <div class="panel-header">
+            <div class="panel-title-wrap">
+              <span class="panel-title">Driver Shift & Route Manifest</span>
+            </div>
+            <div class="panel-note" id="collectorShiftRouteBadge" style="color:var(--color-emerald); font-weight:600;">
+              Truck #04 · Zones A & B Express
+            </div>
+          </div>
+
+          <div style="padding: 16px; display: flex; flex-direction: column; gap: 14px;">
+            <!-- Next Priority Stop Spotlight -->
+            <div id="collectorNextStopSpotlight">
+              <!-- Populated dynamically via renderCollectorShift() -->
+            </div>
+
+            <!-- Shift Driver Telemetry Stats -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div style="background:var(--bg-canvas); border:1px solid var(--border-subtle); border-radius:4px; padding:10px;">
+                <div style="font-size:10px; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Assigned Vehicle</div>
+                <div class="font-mono" style="font-size:14px; font-weight:700; color:var(--text-primary); margin-top:2px;" id="shiftVehicleName">Truck #04</div>
+                <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">Capacity: 3,500 kg</div>
+              </div>
+              <div style="background:var(--bg-canvas); border:1px solid var(--border-subtle); border-radius:4px; padding:10px;">
+                <div style="font-size:10px; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Shift Status</div>
+                <div style="font-size:13px; font-weight:700; color:var(--color-emerald); margin-top:2px; display:flex; align-items:center; gap:6px;">
+                  <span class="status-dot" style="width:7px; height:7px;"></span> Active Route
+                </div>
+                <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">Zones A & B Express</div>
+              </div>
+            </div>
+
+            <!-- Recent Completed Stops by Driver -->
+            <div>
+              <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-primary); margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                <span>Recent Stops Cleared</span>
+                <span style="font-size:10px; color:var(--text-muted);" id="shiftStopsCount">0 cleared</span>
+              </div>
+              <div id="collectorRecentStopsList" style="display:flex; flex-direction:column; gap:6px;">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 1. Industrial Symbiosis Reuse Matches -->
+        <section class="panel-card" id="panelMatches">
+          <div class="panel-header">
+            <div class="panel-title-wrap">
+              <span class="panel-title">Industrial Symbiosis Matches</span>
+              <span class="panel-count" id="matchesBadge">(0 Active)</span>
+            </div>
+            <div class="symbiosis-toggle-wrap">
+              <button class="symbiosis-tab-btn" id="btnMatchTenant" onclick="setSymbiosisMode('tenant')">My Factory</button>
+              <button class="symbiosis-tab-btn active" id="btnMatchAll" onclick="setSymbiosisMode('all')">All Park</button>
+            </div>
+          </div>
+
+          <div class="matches-list" id="matchesList">
+            <!-- Dynamic reuse matches -->
+          </div>
+        </section>
+
+        <!-- 2. Hazardous & Compliance Audit Log -->
+        <section class="panel-card" id="panelCompliance">
+          <div class="panel-header">
+            <div class="panel-title-wrap">
+              <span class="panel-title">Compliance Audit Trail</span>
+              <span class="panel-count" id="complianceBadge">(0 Logged)</span>
+            </div>
+            <div class="panel-note">
+              Certified Weight Ledger
+            </div>
+          </div>
+
+          <div class="table-container compliance-scroll">
+            <table class="data-table" style="min-width: 480px;">
+              <thead>
+                <tr>
+                  <th>Log ID</th>
+                  <th>Timestamp</th>
+                  <th>Tenant</th>
+                  <th>Material</th>
+                  <th>Net Weight</th>
+                  <th>Audit Status</th>
+                </tr>
+              </thead>
+              <tbody id="complianceLogBody">
+                <!-- Dynamic compliance logs -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- CO2 Factors Breakdown Modal -->
+  <div class="modal-overlay" id="co2Modal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>CO₂ Emissions Avoidance Model</h3>
+        <button class="btn-close-modal" onclick="closeCo2Modal()">&times;</button>
+      </div>
+      <div style="font-size:12px; color:var(--text-secondary); line-height:1.5;">
+        Lifecycle analysis estimates kilograms of carbon dioxide equivalent (<strong>kg CO₂e</strong>) prevented per kilogram of material diverted from municipal landfill:
+      </div>
+      <div class="table-container">
+        <table class="data-table" style="border:1px solid var(--border-subtle); border-radius:4px; min-width: 400px;">
+          <thead>
+            <tr>
+              <th>Waste Stream</th>
+              <th>Avoidance Factor</th>
+              <th>Circular Path</th>
+            </tr>
+          </thead>
+          <tbody id="co2FactorsTableBody">
+            <!-- Populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex; justify-content:flex-end;">
+        <button class="btn-action-collect" style="padding:6px 14px;" onclick="closeCo2Modal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Evaluator Demo Profiles & Role Showcase Modal -->
+  <div class="modal-overlay" id="demoShowcaseModal">
+    <div class="modal-box modal-box-wide">
+      <div class="modal-head">
+        <div>
+          <h3>Evaluator & Judge Persona Showcase</h3>
+          <p style="font-size:12px; color:var(--text-secondary); margin-top:3px;">
+            Switch between pre-seeded personas or register a custom evaluator identity to test multi-tenant access control and operational role workflows.
+          </p>
+        </div>
+        <button class="btn-close-modal" onclick="closeDemoShowcaseModal()">&times;</button>
+      </div>
+
+      <!-- Live Notification Banner -->
+      <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.25); border-radius:4px; padding:8px 12px; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+        <span style="font-size:11px; color:var(--color-emerald); font-weight:600;">
+          ⚡ Zero-Friction Demo Simulation · No real passwords or authentication required.
+        </span>
+        <span class="demo-badge-disclaimer">Local + API Hybrid</span>
+      </div>
+
+      <!-- Section 1: Pre-Seeded & Created Personas -->
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong style="font-size:12px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-primary);">
+            Available Personas (<span id="demoUserCount">3</span>)
+          </strong>
+          <span style="font-size:11px; color:var(--text-muted);">Click to instantly assume persona view</span>
+        </div>
+        <div class="demo-grid-profiles" id="demoProfilesGrid">
+          <!-- Populated dynamically via renderDemoProfiles() -->
+        </div>
+      </div>
+
+      <!-- Section 2: Zero-Friction Demo Sign-Up -->
+      <div class="signup-form-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <div>
+            <strong style="font-size:12px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-primary);">
+              Register Pitch Persona (Fast Demo Sign-Up)
+            </strong>
+            <p style="font-size:11px; color:var(--text-muted); margin-top:2px;">
+              Create an ad-hoc evaluator profile with specific operational scope for live evaluation.
+            </p>
+          </div>
+        </div>
+
+        <!-- Quick Presets -->
+        <div>
+          <span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; color:var(--text-muted);">Quick-Fill Presets:</span>
+          <div class="preset-pills" style="margin-top:4px;">
+            <button type="button" class="preset-pill-btn" onclick="quickFillPreset('judge-tenant')">🏭 Judge as Tenant (SteelWorks Ltd)</button>
+            <button type="button" class="preset-pill-btn" onclick="quickFillPreset('judge-collector')">🚛 Judge as Driver (Truck #02 Express)</button>
+            <button type="button" class="preset-pill-btn" onclick="quickFillPreset('judge-manager')">🏛️ Judge as Park Director</button>
+            <button type="button" class="preset-pill-btn" onclick="quickFillPreset('judge-ecopack')">📦 Judge as EcoPack Solutions</button>
+          </div>
+        </div>
+
+        <form id="demoSignupForm" onsubmit="handleCreateDemoUser(event)">
+          <div class="signup-form-grid">
+            <div class="form-group">
+              <label for="inputDemoName">Evaluator / Pitch Name</label>
+              <input type="text" id="inputDemoName" class="form-input" placeholder="e.g. Judge Alex Rivers" required />
+            </div>
+
+            <div class="form-group">
+              <label for="selectDemoRole">Operational Role</label>
+              <select id="selectDemoRole" class="form-input" onchange="handleRoleSelectChange()">
+                <option value="Tenant">Tenant (Factory Operator)</option>
+                <option value="Collector">Collector (Logistics Driver)</option>
+                <option value="Park Manager">Park Manager (Park Oversight)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="selectDemoScope">Assigned Scope</label>
+              <select id="selectDemoScope" class="form-input">
+                <!-- Dynamically populated based on role -->
+              </select>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; flex-wrap:wrap; gap:8px;">
+            <span style="font-size:10px; color:var(--text-muted);">
+              Saved locally to browser + persisted to backend SQLite automatically.
+            </span>
+            <div style="display:flex; gap:8px;">
+              <button type="button" class="btn-nav-control" style="padding:6px 12px; font-size:11px;" onclick="closeDemoShowcaseModal()">Cancel</button>
+              <button type="submit" class="btn-action-collect" style="padding:6px 14px; font-size:12px; font-weight:700;">
+                Create & Switch Persona ⚡
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification System -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Universal Engine (Backend API + Zero-Latency Standalone Browser Simulator) -->
+  <script>
+    // System Lifecycle Configuration Constants
+    const CO2_AVOIDANCE_FACTORS = {
+      metal: 2.1,
+      plastic: 1.5,
+      cardboard: 1.2,
+      oil: 1.8,
+      solvent: 1.6,
+      organic: 0.5,
+      mixed: 0.0
+    };
+
+    const FILL_RATES = {
+      cardboard: 1.2,
+      organic: 1.5,
+      metal: 0.8,
+      plastic: 1.1,
+      mixed: 1.0,
+      oil: 0.7,
+      solvent: 0.6
+    };
+
+    // Canonical Factory Seed Dataset
+    function getDefaultSeedState() {
+      const now = new Date();
+      const formatDate = (d) => {
+        const pad = (n) => String(n).padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+      };
+
+      const t2h = formatDate(new Date(now.getTime() - 2 * 3600000));
+      const t3h = formatDate(new Date(now.getTime() - 3 * 3600000));
+      const t4h = formatDate(new Date(now.getTime() - 4 * 3600000));
+      const t5h = formatDate(new Date(now.getTime() - 5 * 3600000));
+      const t6h = formatDate(new Date(now.getTime() - 6 * 3600000));
+      const t7h = formatDate(new Date(now.getTime() - 7 * 3600000));
+      const t8h = formatDate(new Date(now.getTime() - 8 * 3600000));
+      const t9h = formatDate(new Date(now.getTime() - 9 * 3600000));
+      const t1d = formatDate(new Date(now.getTime() - 24 * 3600000));
+      const t1d2h = formatDate(new Date(now.getTime() - 26 * 3600000));
+
+      const tenants = [
+        { id: 1, name: "AutoParts Co", zone: "Zone A", needs: ["metal", "plastic"] },
+        { id: 2, name: "SteelWorks Ltd", zone: "Zone A", needs: ["metal"] },
+        { id: 3, EcoPack: "EcoPack Solutions", name: "EcoPack Solutions", zone: "Zone B", needs: ["cardboard", "plastic"] },
+        { id: 4, name: "ChemClean Refining", zone: "Zone B", needs: ["oil", "solvent"] },
+        { id: 5, name: "GreenAgro Organics", zone: "Zone C", needs: ["organic"] },
+        { id: 6, name: "PolymerTech Industries", zone: "Zone C", needs: ["plastic", "solvent"] }
+      ];
+
+      const bins = [
+        { id: 1, tenant: "AutoParts Co", zone: "Zone A", waste_type: "metal", fill_pct: 45.0, capacity_kg: 500.0, current_kg: 225.0, is_hazardous: 0 },
+        { id: 2, tenant: "AutoParts Co", zone: "Zone A", waste_type: "oil", fill_pct: 60.0, capacity_kg: 200.0, current_kg: 120.0, is_hazardous: 1 },
+        { id: 3, tenant: "SteelWorks Ltd", zone: "Zone A", waste_type: "metal", fill_pct: 35.0, capacity_kg: 1000.0, current_kg: 350.0, is_hazardous: 0 },
+        { id: 4, tenant: "SteelWorks Ltd", zone: "Zone A", waste_type: "solvent", fill_pct: 72.0, capacity_kg: 150.0, current_kg: 108.0, is_hazardous: 1 },
+        { id: 5, tenant: "EcoPack Solutions", zone: "Zone B", waste_type: "cardboard", fill_pct: 50.0, capacity_kg: 400.0, current_kg: 200.0, is_hazardous: 0 },
+        { id: 6, tenant: "EcoPack Solutions", zone: "Zone B", waste_type: "mixed", fill_pct: 20.0, capacity_kg: 300.0, current_kg: 60.0, is_hazardous: 0 },
+        { id: 7, tenant: "ChemClean Refining", zone: "Zone B", waste_type: "solvent", fill_pct: 75.0, capacity_kg: 250.0, current_kg: 187.5, is_hazardous: 1 },
+        { id: 8, tenant: "ChemClean Refining", zone: "Zone B", waste_type: "oil", fill_pct: 40.0, capacity_kg: 350.0, current_kg: 140.0, is_hazardous: 1 },
+        { id: 9, tenant: "GreenAgro Organics", zone: "Zone C", waste_type: "organic", fill_pct: 55.0, capacity_kg: 600.0, current_kg: 330.0, is_hazardous: 0 },
+        { id: 10, tenant: "GreenAgro Organics", zone: "Zone C", waste_type: "cardboard", fill_pct: 30.0, capacity_kg: 200.0, current_kg: 60.0, is_hazardous: 0 },
+        { id: 11, tenant: "PolymerTech Industries", zone: "Zone C", waste_type: "plastic", fill_pct: 65.0, capacity_kg: 450.0, current_kg: 292.5, is_hazardous: 0 }
+      ];
+
+      const compliance_log = [
+        { id: 1, bin_id: 1, tenant: "AutoParts Co", waste_type: "metal", is_hazardous: 0, kg_collected: 420.0, created_time: t3h, done_time: t2h, status: "done" },
+        { id: 2, bin_id: 4, tenant: "SteelWorks Ltd", waste_type: "solvent", is_hazardous: 1, kg_collected: 135.0, created_time: t5h, done_time: t4h, status: "done" },
+        { id: 3, bin_id: 5, tenant: "EcoPack Solutions", waste_type: "cardboard", is_hazardous: 0, kg_collected: 360.0, created_time: t7h, done_time: t6h, status: "done" },
+        { id: 4, bin_id: 6, tenant: "EcoPack Solutions", waste_type: "mixed", is_hazardous: 0, kg_collected: 210.0, created_time: t9h, done_time: t8h, status: "done" },
+        { id: 5, bin_id: 8, tenant: "ChemClean Refining", waste_type: "oil", is_hazardous: 1, kg_collected: 280.0, created_time: t1d2h, done_time: t1d, status: "done" }
+      ];
+
+      const demo_users = [
+        { id: 1, name: "Elena Vance", role: "Park Manager", scope: "Park-Wide Administration", created_at: "Initial Seed" },
+        { id: 2, name: "Marcus Chen", role: "Collector", scope: "Truck #04 · Zones A & B Express", created_at: "Initial Seed" },
+        { id: 3, name: "Priya Sharma", role: "Tenant", scope: "AutoParts Co", created_at: "Initial Seed" }
+      ];
+
+      return {
+        tenants,
+        bins,
+        priority_pickups: [],
+        compliance_log,
+        reuse_matches: [],
+        impact_metrics: {},
+        demo_users,
+        simulation_running: true,
+        next_pickup_id: 6
+      };
+    }
+
+    // Master In-Memory & LocalStorage State
+    let appState = null;
+    let isBackendAvailable = null; // null: probing, true: connected, false: standalone
+    let activeRole = 'all';
+    let pollInterval = null;
+    let demoUsers = [];
+    let currentUserId = 1;
+
+    // Helper: Compute Local Symbiosis Matches
+    function computeLocalReuseMatches(state) {
+      const matches = [];
+      const bins = state.bins || [];
+      const tenants = state.tenants || [];
+
+      for (const b of bins) {
+        if (b.fill_pct >= 30.0) {
+          for (const t of tenants) {
+            if (t.name !== b.tenant && (t.needs || []).includes(b.waste_type)) {
+              const currentKg = Math.round((b.fill_pct / 100.0) * b.capacity_kg * 10) / 10;
+              matches.push({
+                bin_id: b.id,
+                waste_type: b.waste_type,
+                fill_pct: b.fill_pct,
+                available_kg: currentKg,
+                source_tenant: b.tenant,
+                source_zone: b.zone || 'Zone A',
+                target_tenant: t.name,
+                target_zone: t.zone,
+                narrative: `${b.tenant} has ${currentKg} kg of ${b.waste_type}, ${t.name} needs it`
+              });
+            }
+          }
+        }
+      }
+      matches.sort((a, b) => b.available_kg - a.available_kg);
+      return matches;
+    }
+
+    // Helper: Compute Local Impact & Diversion Metrics
+    function computeLocalImpactMetrics(state) {
+      const logs = state.compliance_log || [];
+      let total_kg = 0.0;
+      let diverted_kg = 0.0;
+      let landfill_kg = 0.0;
+      let co2_avoided_kg = 0.0;
+      const by_category = {};
+
+      for (const log of logs) {
+        const kg = Number(log.kg_collected || 0);
+        const w_type = log.waste_type;
+        total_kg += kg;
+
+        if (!by_category[w_type]) by_category[w_type] = { kg: 0, co2: 0 };
+        by_category[w_type].kg += kg;
+
+        const factor = CO2_AVOIDANCE_FACTORS[w_type] || 0.0;
+        const avoided = kg * factor;
+        co2_avoided_kg += avoided;
+        by_category[w_type].co2 += avoided;
+
+        if (w_type !== 'mixed') {
+          diverted_kg += kg;
+        } else {
+          landfill_kg += kg;
+        }
+      }
+
+      const diversion_rate = total_kg > 0 ? (diverted_kg / total_kg * 100.0) : 0.0;
+
+      return {
+        total_kg_collected: Math.round(total_kg * 10) / 10,
+        diverted_kg: Math.round(diverted_kg * 10) / 10,
+        landfill_kg: Math.round(landfill_kg * 10) / 10,
+        diversion_rate_pct: Math.round(diversion_rate * 10) / 10,
+        co2_avoided_kg: Math.round(co2_avoided_kg * 10) / 10,
+        by_category,
+        co2_factors: CO2_AVOIDANCE_FACTORS
+      };
+    }
+
+    // Load or Initialize Local State
+    function loadLocalState() {
+      try {
+        const stored = localStorage.getItem('loopyard-sim-state');
+        if (stored) {
+          appState = JSON.parse(stored);
+        }
+      } catch (e) {
+        console.warn('LocalStorage parse failed, using seed state', e);
+      }
+
+      if (!appState || !appState.bins || appState.bins.length === 0) {
+        appState = getDefaultSeedState();
+      }
+
+      // Ensure calculated fields are complete
+      appState.reuse_matches = computeLocalReuseMatches(appState);
+      appState.impact_metrics = computeLocalImpactMetrics(appState);
+      saveLocalState();
+    }
+
+    function saveLocalState() {
+      if (appState) {
+        try {
+          localStorage.setItem('loopyard-sim-state', JSON.stringify(appState));
+        } catch (e) {}
+      }
+    }
+
+    // Local 3-Second Simulation Tick
+    function stepLocalSimulation() {
+      if (!appState || !appState.simulation_running) return;
+
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      const nowStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
+      let changed = false;
+
+      // Increment Bins
+      appState.bins.forEach(b => {
+        const inc = FILL_RATES[b.waste_type] || 1.0;
+        const newFill = Math.min(100.0, Math.round((b.fill_pct + inc) * 100) / 100);
+        if (newFill !== b.fill_pct) {
+          b.fill_pct = newFill;
+          b.current_kg = Math.round((b.fill_pct / 100.0) * b.capacity_kg * 10) / 10;
+          changed = true;
+        }
+
+        // Auto-Alert & Pickup Creation at >= 80%
+        if (b.fill_pct >= 80.0) {
+          const hasOpen = (appState.priority_pickups || []).some(p => p.bin_id === b.id && p.status === 'open');
+          if (!hasOpen) {
+            const newPickup = {
+              id: appState.next_pickup_id++,
+              bin_id: b.id,
+              tenant: b.tenant,
+              waste_type: b.waste_type,
+              fill_pct: b.fill_pct,
+              capacity_kg: b.capacity_kg,
+              current_kg: b.current_kg,
+              is_hazardous: (b.waste_type === 'solvent' || b.waste_type === 'oil') ? 1 : 0,
+              created_time: nowStr,
+              done_time: null,
+              status: 'open'
+            };
+            appState.priority_pickups.push(newPickup);
+            changed = true;
+          }
+        }
+      });
+
+      // Update current fill & kg in open pickups
+      (appState.priority_pickups || []).forEach(p => {
+        const b = appState.bins.find(bin => bin.id === p.bin_id);
+        if (b) {
+          p.fill_pct = b.fill_pct;
+          p.current_kg = b.current_kg;
+        }
+      });
+
+      // Priority Queue Sorting Rule: Hazardous first, then oldest created time
+      appState.priority_pickups.sort((a, b) => {
+        if (b.is_hazardous !== a.is_hazardous) {
+          return b.is_hazardous - a.is_hazardous;
+        }
+        return a.created_time.localeCompare(b.created_time);
+      });
+
+      appState.reuse_matches = computeLocalReuseMatches(appState);
+      saveLocalState();
+      renderAll();
+    }
+
+    // Unified Master Polling Function
+    async function syncSystemState() {
+      // Attempt backend API call with short timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 1800);
+
+      try {
+        const res = await fetch('/api/state', { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const data = await res.json();
+          appState = data;
+          if (data.demo_users && data.demo_users.length > 0) {
+            demoUsers = data.demo_users;
+          }
+          isBackendAvailable = true;
+          renderAll();
+          return;
+        } else {
+          throw new Error('API returned ' + res.status);
+        }
+      } catch (err) {
+        // Backend not available (e.g. static host on Vercel) -> Run Standalone Browser Simulation
+        if (isBackendAvailable !== false) {
+          console.info('Switching to Standalone Browser Simulation Mode (Vercel / Static Ready).');
+          isBackendAvailable = false;
+          if (!appState) loadLocalState();
+        }
+        // Run local simulation step
+        stepLocalSimulation();
+      }
+    }
+
+    // Waste Type Helper to get consistent tag classes & left-border classes
+    function getWasteTypeStyles(type) {
+      const lower = (type || '').toLowerCase();
+      if (lower === 'solvent' || lower === 'oil') {
+        return { tagClass: 'tag-hazard', borderClass: 'border-cat-hazard', isHaz: true };
+      } else if (lower === 'metal') {
+        return { tagClass: 'tag-metal', borderClass: 'border-cat-metal', isHaz: false };
+      } else if (lower === 'plastic') {
+        return { tagClass: 'tag-plastic', borderClass: 'border-cat-plastic', isHaz: false };
+      } else if (lower === 'cardboard') {
+        return { tagClass: 'tag-cardboard', borderClass: 'border-cat-cardboard', isHaz: false };
+      } else if (lower === 'organic') {
+        return { tagClass: 'tag-organic', borderClass: 'border-cat-organic', isHaz: false };
+      } else {
+        return { tagClass: 'tag-mixed', borderClass: 'border-cat-mixed', isHaz: false };
+      }
+    }
+
+    // Theme Management
+    function initTheme() {
+      const saved = localStorage.getItem('loopyard-theme');
+      if (saved === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').innerText = '☀️';
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.getElementById('themeIcon').innerText = '🌙';
+      }
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('loopyard-theme', isDark ? 'dark' : 'light');
+      document.getElementById('themeIcon').innerText = isDark ? '☀️' : '🌙';
+    }
+
+    function toggleDemoBar() {
+      const bar = document.getElementById('demoUtilityBar');
+      bar.classList.toggle('collapsed');
+    }
+
+    // UI Rendering
+    function renderAll() {
+      if (!appState) return;
+      renderActiveUserUI();
+      renderTelemetryStatus();
+      renderStats();
+      renderPickupQueue();
+      renderReuseMatches();
+      renderBins();
+      renderComplianceLog();
+      populateTenantFilter();
+      if (activeRole === 'collector') {
+        renderCollectorShift();
+      } else if (activeRole === 'tenant') {
+        renderTenantHistory();
+      }
+    }
+
+    function renderTelemetryStatus() {
+      const pill = document.getElementById('telemetryPill');
+      const text = document.getElementById('telemetryStatusText');
+      const icon = document.getElementById('btnSimIcon');
+      const btnText = document.getElementById('btnSimText');
+
+      if (appState.simulation_running) {
+        pill.className = 'status-pill';
+        text.innerText = '● Live · 3s';
+        icon.innerText = '⏸';
+        btnText.innerText = 'Pause';
+      } else {
+        pill.className = 'status-pill paused';
+        text.innerText = '⏸ Paused';
+        icon.innerText = '▶';
+        btnText.innerText = 'Resume';
+      }
+    }
+
+    let symbiosisMode = 'all'; // 'all' or 'tenant'
+
+    function setSymbiosisMode(mode) {
+      symbiosisMode = mode;
+      updateSymbiosisTabUI();
+      renderReuseMatches();
+    }
+
+    function updateSymbiosisTabUI() {
+      const btnTenant = document.getElementById('btnMatchTenant');
+      const btnAll = document.getElementById('btnMatchAll');
+      if (btnTenant) btnTenant.classList.toggle('active', symbiosisMode === 'tenant');
+      if (btnAll) btnAll.classList.toggle('active', symbiosisMode === 'all');
+    }
+
+    function getActiveTenantName() {
+      const user = getCurrentUser();
+      if (user && user.role && user.role.toLowerCase().includes('tenant') && user.scope) {
+        return user.scope;
+      }
+      const filterVal = document.getElementById('tenantFilter')?.value;
+      if (filterVal && filterVal !== 'all') return filterVal;
+      return 'AutoParts Co';
+    }
+
+    function quickSwitchPersonaRole(roleKey) {
+      let targetUser = null;
+      if (roleKey === 'manager') {
+        targetUser = demoUsers.find(u => u.role.toLowerCase().includes('manager')) || demoUsers[0];
+      } else if (roleKey === 'collector') {
+        targetUser = demoUsers.find(u => u.role.toLowerCase().includes('collector')) || demoUsers[1];
+      } else if (roleKey === 'tenant') {
+        targetUser = demoUsers.find(u => u.role.toLowerCase().includes('tenant')) || demoUsers[2];
+      }
+      if (targetUser) {
+        switchToUser(targetUser.id);
+      } else {
+        setRoleView(roleKey);
+      }
+    }
+
+    function renderStats() {
+      const im = appState.impact_metrics || {};
+      const pickups = appState.priority_pickups || [];
+      const hazCount = pickups.filter(p => p.is_hazardous === 1).length;
+      const stdCount = pickups.length - hazCount;
+
+      // 1. Unified / Park Manager View KPIs
+      const elTotal = document.getElementById('statTotalKg');
+      if (elTotal) elTotal.innerText = Number(im.total_kg_collected || 0).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
+      const elDivKg = document.getElementById('statDivertedKg');
+      if (elDivKg) elDivKg.innerText = `${Number(im.diverted_kg || 0).toLocaleString()} kg`;
+      const elLandKg = document.getElementById('statLandfillKg');
+      if (elLandKg) elLandKg.innerText = `${Number(im.landfill_kg || 0).toLocaleString()} kg`;
+      const elDivRate = document.getElementById('statDiversionRate');
+      if (elDivRate) elDivRate.innerText = Number(im.diversion_rate_pct || 0).toFixed(1);
+      const elCo2 = document.getElementById('statCo2Avoided');
+      if (elCo2) elCo2.innerText = Number(im.co2_avoided_kg || 0).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
+
+      const elPickups = document.getElementById('statActivePickups');
+      if (elPickups) elPickups.innerText = pickups.length;
+      const elHaz = document.getElementById('statHazardCount');
+      if (elHaz) elHaz.innerText = `${hazCount} Hazardous`;
+      const elStd = document.getElementById('statStandardCount');
+      if (elStd) elStd.innerText = `${stdCount} Standard`;
+
+      const alertCard = document.getElementById('kpiAlertCard');
+      if (alertCard) {
+        if (pickups.length === 0) alertCard.classList.add('is-zero');
+        else alertCard.classList.remove('is-zero');
+      }
+
+      // 2. Collector Role KPIs
+      const colOpen = document.getElementById('colStatOpen');
+      if (colOpen) colOpen.innerText = pickups.length;
+      const colHaz = document.getElementById('colStatHazCount');
+      if (colHaz) colHaz.innerText = `${hazCount} Hazardous`;
+      const colStd = document.getElementById('colStatStdCount');
+      if (colStd) colStd.innerText = `${stdCount} Standard`;
+      const colP1 = document.getElementById('colStatP1Count');
+      if (colP1) colP1.innerText = hazCount;
+      const colWeight = document.getElementById('colStatWeight');
+      if (colWeight) colWeight.innerText = Number(im.total_kg_collected || 0).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
+
+      const user = getCurrentUser();
+      const colVehicle = document.getElementById('colStatVehicle');
+      const colZones = document.getElementById('colStatRouteZones');
+      if (user && user.role.toLowerCase().includes('collector')) {
+        const parts = user.scope.split('·');
+        if (colVehicle) colVehicle.innerText = parts[0]?.trim() || 'Truck #04';
+        if (colZones) colZones.innerText = parts[1]?.trim() || 'Zones A & B Express Dispatch';
+      } else {
+        if (colVehicle) colVehicle.innerText = 'Truck #04';
+        if (colZones) colZones.innerText = 'Zones A & B Express Dispatch';
+      }
+
+      // 3. Tenant Role KPIs
+      const activeTenantName = getActiveTenantName();
+      const tBins = (appState.bins || []).filter(b => b.tenant === activeTenantName);
+      const tenantBinsCount = document.getElementById('tenantStatBinsCount');
+      if (tenantBinsCount) tenantBinsCount.innerText = tBins.length;
+
+      const tenantFacName = document.getElementById('tenantStatFactoryName');
+      if (tenantFacName) {
+        const z = tBins[0]?.zone || 'Zone A';
+        tenantFacName.innerText = `${activeTenantName} · ${z}`;
+      }
+
+      const tStoredKg = tBins.reduce((sum, b) => sum + (Number(b.current_kg) || 0), 0);
+      const tenantStored = document.getElementById('tenantStatStoredKg');
+      if (tenantStored) tenantStored.innerText = tStoredKg.toFixed(1);
+
+      const tAvgFill = tBins.length > 0 ? (tBins.reduce((sum, b) => sum + (Number(b.fill_pct) || 0), 0) / tBins.length).toFixed(1) : '0.0';
+      const tenantAvgFill = document.getElementById('tenantStatAvgFill');
+      if (tenantAvgFill) tenantAvgFill.innerText = `${tAvgFill}%`;
+
+      const outboundMatches = (appState.reuse_matches || []).filter(m => m.source_tenant === activeTenantName);
+      const inboundMatches = (appState.reuse_matches || []).filter(m => m.target_tenant === activeTenantName);
+
+      const tenantOut = document.getElementById('tenantStatOutboundCount');
+      if (tenantOut) tenantOut.innerText = outboundMatches.length;
+      const tenantIn = document.getElementById('tenantStatInboundCount');
+      if (tenantIn) tenantIn.innerText = inboundMatches.length;
+    }
+
+    function renderPickupQueue() {
+      const pickups = appState.priority_pickups || [];
+      const tbody = document.getElementById('pickupQueueBody');
+      const badge = document.getElementById('queueBadge');
+      badge.innerText = `(${pickups.length} Open)`;
+
+      if (pickups.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" style="text-align:center; color:var(--text-muted); padding:2rem;">
+              No active pickups in queue. Bins generate dispatch tasks at ≥ 80% fill.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = pickups.map(p => {
+        const isHaz = p.is_hazardous === 1;
+        const styles = getWasteTypeStyles(p.waste_type);
+
+        const priorityTag = isHaz
+          ? `<span class="priority-indicator priority-hazard"><span class="priority-dot"></span>P1 HAZARDOUS</span>`
+          : `<span class="priority-indicator priority-standard"><span class="priority-dot"></span>P2 STANDARD</span>`;
+
+        const fillPct = Math.round(p.fill_pct);
+        let fillBarColor = '#10b981';
+        if (fillPct >= 80) fillBarColor = '#ef4444';
+        else if (fillPct >= 60) fillBarColor = '#f59e0b';
+
+        return `
+          <tr class="${isHaz ? 'row-hazard' : ''}">
+            <td>${priorityTag}</td>
+            <td class="font-mono" style="font-weight:700;">#PK-${p.id}</td>
+            <td class="font-mono" style="font-weight:600;">Bin #${p.bin_id}</td>
+            <td style="font-weight:600;">${p.tenant}</td>
+            <td>
+              <span class="material-tag ${styles.tagClass}">
+                ${p.waste_type}
+              </span>
+            </td>
+            <td class="font-mono" style="font-weight:700;">${p.current_kg} kg</td>
+            <td>
+              <div class="inline-progress">
+                <span class="font-mono" style="font-size:11px; font-weight:700; min-width:32px;">${fillPct}%</span>
+                <div class="inline-progress-track">
+                  <div class="inline-progress-fill" style="width: ${fillPct}%; background:${fillBarColor};"></div>
+                </div>
+              </div>
+            </td>
+            <td class="font-mono" style="color:var(--text-muted); font-size:11px;">${p.created_time}</td>
+            <td style="text-align:right;">
+              <div style="display:inline-flex; align-items:center; gap:6px;">
+                <button class="btn-action-partial" onclick="partialCollect(${p.bin_id}, 50)" title="Partially collect 50% from this bin">
+                  -50%
+                </button>
+                <button class="btn-action-collect" onclick="completePickup(${p.id})">
+                  ✓ Mark Collected
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderReuseMatches() {
+      const allMatches = appState.reuse_matches || [];
+      const container = document.getElementById('matchesList');
+      const badge = document.getElementById('matchesBadge');
+      const activeTenantName = getActiveTenantName();
+
+      let displayedMatches = allMatches;
+      if (symbiosisMode === 'tenant' || activeRole === 'tenant') {
+        displayedMatches = allMatches.filter(m => m.source_tenant === activeTenantName || m.target_tenant === activeTenantName);
+      }
+
+      if (badge) badge.innerText = `(${displayedMatches.length} Active)`;
+      if (!container) return;
+
+      if (displayedMatches.length === 0) {
+        if (symbiosisMode === 'tenant' || activeRole === 'tenant') {
+          container.innerHTML = `
+            <div style="text-align:center; color:var(--text-muted); padding:2rem; font-size:12px;">
+              <div style="font-size:20px; margin-bottom:6px;">🌱</div>
+              <strong style="color:var(--text-primary);">No Active Exchanges for ${activeTenantName}</strong>
+              <div style="margin-top:4px; font-size:11px; line-height:1.4;">
+                Bins must reach ≥ 30% fill to match raw material input requirements.
+              </div>
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div style="text-align:center; color:var(--text-muted); padding:1.5rem; font-size:12px;">
+              No active peer-to-peer symbiosis matches. Bins must reach ≥ 30% fill to match neighboring input requirements.
+            </div>
+          `;
+        }
+        return;
+      }
+
+      container.innerHTML = displayedMatches.map(m => {
+        const styles = getWasteTypeStyles(m.waste_type);
+        const isOutbound = m.source_tenant === activeTenantName;
+        const isInbound = m.target_tenant === activeTenantName;
+        const isFocused = (activeRole === 'tenant' || symbiosisMode === 'tenant') && (isOutbound || isInbound);
+
+        let typeBadge = '';
+        if (isOutbound) {
+          typeBadge = `<span style="margin-left:auto; font-size:10px; font-weight:700; color:var(--color-emerald); background:rgba(16,185,129,0.12); padding:2px 6px; border-radius:4px; border:1px solid rgba(16,185,129,0.25);">📤 OUTBOUND RESOURCE</span>`;
+        } else if (isInbound) {
+          typeBadge = `<span style="margin-left:auto; font-size:10px; font-weight:700; color:#0284c7; background:rgba(2,132,199,0.12); padding:2px 6px; border-radius:4px; border:1px solid rgba(2,132,199,0.25);">📥 INBOUND FEEDSTOCK</span>`;
+        }
+
+        return `
+          <div class="match-item ${isFocused ? 'tenant-highlight' : ''}" title="${m.narrative}">
+            <div class="match-p2p-route">
+              <span class="route-node">🏭 ${m.source_tenant}</span>
+              <span class="symbiosis-transfer-badge">→ Reuses ${m.available_kg} kg</span>
+              <span class="route-node text-right">📥 ${m.target_tenant}</span>
+            </div>
+            <div class="match-payload">
+              <span class="material-tag ${styles.tagClass}">${m.waste_type}</span>
+              <span class="match-narrative-text">${m.narrative}</span>
+              ${typeBadge}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderCollectorShift() {
+      const spotlight = document.getElementById('collectorNextStopSpotlight');
+      const stopsList = document.getElementById('collectorRecentStopsList');
+      const stopsBadge = document.getElementById('shiftStopsCount');
+      const routeBadge = document.getElementById('collectorShiftRouteBadge');
+      const vehicleName = document.getElementById('shiftVehicleName');
+
+      const user = getCurrentUser();
+      const truckName = (user && user.role.toLowerCase().includes('collector')) ? user.scope : "Truck #04 · Zones A & B Express";
+      if (routeBadge) routeBadge.innerText = truckName;
+      if (vehicleName) vehicleName.innerText = truckName.split('·')[0].trim();
+
+      const pickups = appState.priority_pickups || [];
+      if (spotlight) {
+        if (pickups.length > 0) {
+          const top = pickups[0];
+          const isHaz = top.is_hazardous === 1;
+          const styles = getWasteTypeStyles(top.waste_type);
+          spotlight.innerHTML = `
+            <div style="border: 2px solid ${isHaz ? 'var(--color-crimson)' : 'var(--color-emerald)'}; background: ${isHaz ? 'var(--cat-hazard-bg)' : 'rgba(16,185,129,0.04)'}; border-radius: 6px; padding: 12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:${isHaz ? 'var(--color-crimson)' : 'var(--color-emerald)'};">
+                  ${isHaz ? '🚨 NEXT PRIORITY STOP (P1 HAZARDOUS)' : '⚡ NEXT PRIORITY STOP'}
+                </span>
+                <span class="font-mono" style="font-size:11px; font-weight:700;">#PK-${top.id}</span>
+              </div>
+              <div style="margin-top:6px; display:flex; justify-content:space-between; align-items:baseline;">
+                <div style="font-size:15px; font-weight:800; color:var(--text-primary);">
+                  🏭 ${top.tenant}
+                </div>
+                <span class="material-tag ${styles.tagClass}">${top.waste_type}</span>
+              </div>
+              <div class="font-mono" style="font-size:11px; color:var(--text-secondary); margin-top:2px;">
+                ${top.zone || 'Zone A'} · Bin #${top.bin_id} · Est. <strong>${top.current_kg} kg</strong> (${Math.round(top.fill_pct)}% fill)
+              </div>
+              <div style="margin-top:10px; display:flex; gap:8px;">
+                <button class="btn-action-collect" style="flex:1; padding:7px 10px; font-size:11px;" onclick="completePickup(${top.id})">
+                  ✓ Mark Stop Cleared
+                </button>
+                <button class="btn-action-partial" style="padding:7px 10px; font-size:11px;" onclick="partialCollect(${top.bin_id}, 50)">
+                  -50% Partial
+                </button>
+              </div>
+            </div>
+          `;
+        } else {
+          spotlight.innerHTML = `
+            <div style="border: 1px dashed var(--border-subtle); border-radius: 6px; padding: 16px; text-align:center; color:var(--text-muted); font-size:12px;">
+              <div style="font-size:20px; margin-bottom:4px;">✨</div>
+              <strong style="color:var(--text-primary);">All Park Bins Within Normal Fill Thresholds (&lt; 80%)</strong>
+              <div style="margin-top:3px; font-size:11px;">Truck #04 standing by for autonomous dispatch alerts.</div>
+            </div>
+          `;
+        }
+      }
+
+      const completedLogs = (appState.compliance_log || []).slice(0, 4);
+      if (stopsBadge) stopsBadge.innerText = `${completedLogs.length} recent cleared`;
+      if (stopsList) {
+        if (completedLogs.length === 0) {
+          stopsList.innerHTML = `<div style="font-size:11px; color:var(--text-muted); padding:6px 0;">No stops completed in this shift yet.</div>`;
+        } else {
+          stopsList.innerHTML = completedLogs.map(l => {
+            const styles = getWasteTypeStyles(l.waste_type);
+            return `
+              <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-canvas); border:1px solid var(--border-subtle); border-radius:4px; padding:6px 10px; font-size:11px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="material-tag ${styles.tagClass}" style="font-size:10px; padding:1px 6px;">${l.waste_type}</span>
+                  <span style="font-weight:600; color:var(--text-primary);">${l.tenant}</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="font-mono" style="font-weight:700; color:var(--color-emerald);">${l.kg_collected} kg</span>
+                  <span class="font-mono" style="color:var(--text-muted); font-size:10px;">${(l.done_time || '').split(' ')[1] || ''}</span>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    function renderTenantHistory() {
+      const activeTenantName = getActiveTenantName();
+      const logs = (appState.compliance_log || []).filter(l => l.tenant === activeTenantName);
+      const title = document.getElementById('tenantHistoryTitle');
+      const badge = document.getElementById('tenantHistoryBadge');
+      const tbody = document.getElementById('tenantHistoryBody');
+
+      if (title) title.innerText = `${activeTenantName} · Compliance History`;
+      if (badge) badge.innerText = `(${logs.length} Logged)`;
+      if (!tbody) return;
+
+      if (logs.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align:center; color:var(--text-muted); padding:1.5rem; font-size:12px;">
+              No completed pickups logged yet for ${activeTenantName}.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = logs.map(l => {
+        const styles = getWasteTypeStyles(l.waste_type);
+        return `
+          <tr>
+            <td class="font-mono" style="font-weight:700;">#AUD-${l.id}</td>
+            <td class="font-mono" style="color:var(--text-muted); font-size:11px;">${l.done_time || l.created_time}</td>
+            <td><span class="material-tag ${styles.tagClass}">${l.waste_type}</span></td>
+            <td class="font-mono" style="font-weight:700; color:var(--color-emerald);">${l.kg_collected} kg</td>
+            <td><span style="font-size:11px; font-weight:700; color:var(--color-emerald);">✓ VERIFIED</span></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderBins() {
+      const filter = document.getElementById('tenantFilter').value;
+      const bins = appState.bins || [];
+      const grid = document.getElementById('binsGrid');
+      const badge = document.getElementById('binsBadge');
+
+      const filteredBins = (filter === 'all')
+        ? bins
+        : bins.filter(b => b.tenant === filter);
+
+      badge.innerText = `(${filteredBins.length} Monitored)`;
+
+      grid.innerHTML = filteredBins.map(b => {
+        const isCritical = b.fill_pct >= 80;
+        const isFull = b.fill_pct >= 100;
+        const isWarning = b.fill_pct >= 60 && b.fill_pct < 80;
+        const styles = getWasteTypeStyles(b.waste_type);
+
+        let barClass = '';
+        if (isCritical) {
+          barClass = 'bar-crimson';
+        } else if (isWarning) {
+          barClass = 'bar-amber';
+        }
+
+        let statusTag = '';
+        if (isFull) {
+          statusTag = `<span class="bin-status-tag" style="background:#dc2626; color:#fff;">FULL</span>`;
+        } else if (isCritical) {
+          statusTag = `<span class="bin-status-tag" style="background:#dc2626; color:#fff;">ALERT</span>`;
+        }
+
+        return `
+          <div class="bin-card ${styles.borderClass} ${isCritical ? 'is-critical' : ''}">
+            <div class="bin-top">
+              <div style="min-width:0; overflow:hidden;">
+                <div class="bin-factory-name">${b.tenant}</div>
+                <div class="bin-submeta font-mono">${b.zone || 'Zone A'} · Bin #${b.id}</div>
+              </div>
+              <span class="material-tag ${styles.tagClass}">${b.waste_type}</span>
+            </div>
+
+            <div class="bin-progress-wrap">
+              <div class="bin-progress-readout">
+                <span class="bin-pct-big" style="color: ${isCritical ? 'var(--color-crimson)' : (isWarning ? 'var(--color-amber)' : 'var(--color-emerald)')}">
+                  ${b.fill_pct}% ${statusTag}
+                </span>
+                <span class="bin-weight-dim font-mono">${b.current_kg} / ${b.capacity_kg} kg</span>
+              </div>
+              <div class="bin-progress-track">
+                <div class="bin-progress-bar ${barClass}" style="width: ${b.fill_pct}%;"></div>
+              </div>
+            </div>
+
+            <div class="bin-footer-actions" style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
+              <button class="btn-dump-subtle ${styles.isHaz ? 'btn-dump-hazard' : ''}" onclick="dumpWaste(${b.id})">
+                +25% Dump
+              </button>
+              <button class="btn-collect-subtle" onclick="partialCollect(${b.id}, 25)" title="Partially collect 25% from this bin">
+                -25% Collect
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderComplianceLog() {
+      const logs = appState.compliance_log || [];
+      const tbody = document.getElementById('complianceLogBody');
+      const badge = document.getElementById('complianceBadge');
+      badge.innerText = `(${logs.length} Logged)`;
+
+      if (logs.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align:center; color:var(--text-muted); padding:1.5rem;">
+              No completed pickups in compliance ledger yet.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = logs.map(l => {
+        const styles = getWasteTypeStyles(l.waste_type);
+        return `
+          <tr>
+            <td class="font-mono" style="font-weight:700;">#AUD-${l.id}</td>
+            <td class="font-mono" style="color:var(--text-muted); font-size:11px;">${l.done_time}</td>
+            <td style="font-weight:600;">${l.tenant}</td>
+            <td>
+              <span class="material-tag ${styles.tagClass}">${l.waste_type}</span>
+            </td>
+            <td class="font-mono" style="font-weight:700; color:var(--color-emerald);">${l.kg_collected} kg</td>
+            <td>
+              <span style="font-size:11px; font-weight:700; color:var(--color-emerald);">✓ VERIFIED</span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function populateTenantFilter() {
+      const select = document.getElementById('tenantFilter');
+      if (select.children.length > 1) return;
+
+      const tenants = appState.tenants || [];
+      tenants.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.name;
+        opt.innerText = `${t.name} (${t.zone})`;
+        select.appendChild(opt);
+      });
+    }
+
+    // Operational Role Switching
+    function setRoleView(role) {
+      activeRole = role;
+      document.querySelectorAll('.role-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-role') === role);
+      });
+
+      // Update persona quick switch pills
+      const qManager = document.getElementById('quickPillManager');
+      const qCollector = document.getElementById('quickPillCollector');
+      const qTenant = document.getElementById('quickPillTenant');
+      if (qManager) qManager.classList.toggle('active', role === 'manager');
+      if (qCollector) qCollector.classList.toggle('active', role === 'collector');
+      if (qTenant) qTenant.classList.toggle('active', role === 'tenant');
+
+      const kpi = document.getElementById('kpiStrip');
+      const colKpi = document.getElementById('collectorKpiStrip');
+      const tenKpi = document.getElementById('tenantKpiStrip');
+      const queue = document.getElementById('panelQueue');
+      const bins = document.getElementById('panelBins');
+      const matches = document.getElementById('panelMatches');
+      const compliance = document.getElementById('panelCompliance');
+      const colShift = document.getElementById('panelCollectorShift');
+      const tenHistory = document.getElementById('panelTenantHistory');
+      const tenantFilterWrap = document.getElementById('tenantFilterWrap');
+
+      // Hide all role-specific containers first
+      [kpi, colKpi, tenKpi, queue, bins, matches, compliance, colShift, tenHistory].forEach(el => {
+        if (el) el.classList.add('hidden');
+      });
+
+      if (role === 'all') {
+        if (kpi) kpi.classList.remove('hidden');
+        if (queue) queue.classList.remove('hidden');
+        if (bins) bins.classList.remove('hidden');
+        if (matches) matches.classList.remove('hidden');
+        if (compliance) compliance.classList.remove('hidden');
+        if (tenantFilterWrap) tenantFilterWrap.style.display = 'flex';
+        symbiosisMode = 'all';
+        updateSymbiosisTabUI();
+      } else if (role === 'manager') {
+        if (kpi) kpi.classList.remove('hidden');
+        if (bins) bins.classList.remove('hidden');
+        if (compliance) compliance.classList.remove('hidden');
+        if (tenantFilterWrap) tenantFilterWrap.style.display = 'flex';
+        const filterSelect = document.getElementById('tenantFilter');
+        if (filterSelect) filterSelect.value = 'all';
+      } else if (role === 'collector') {
+        if (colKpi) colKpi.classList.remove('hidden');
+        if (queue) queue.classList.remove('hidden');
+        if (bins) bins.classList.remove('hidden');
+        if (colShift) colShift.classList.remove('hidden');
+        if (tenantFilterWrap) tenantFilterWrap.style.display = 'flex';
+        const filterSelect = document.getElementById('tenantFilter');
+        if (filterSelect) filterSelect.value = 'all';
+        renderCollectorShift();
+      } else if (role === 'tenant') {
+        if (tenKpi) tenKpi.classList.remove('hidden');
+        if (bins) bins.classList.remove('hidden');
+        if (tenHistory) tenHistory.classList.remove('hidden');
+        if (matches) matches.classList.remove('hidden');
+        if (tenantFilterWrap) tenantFilterWrap.style.display = 'none';
+        const activeTenantName = getActiveTenantName();
+        const filterSelect = document.getElementById('tenantFilter');
+        if (filterSelect) {
+          filterSelect.value = activeTenantName;
+        }
+        symbiosisMode = 'tenant';
+        updateSymbiosisTabUI();
+        renderTenantHistory();
+      }
+
+      renderAll();
+    }
+
+    // Actions: Dump Waste (+25%)
+    async function dumpWaste(binId) {
+      if (isBackendAvailable) {
+        try {
+          const res = await fetch('/api/bins/dump', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ bin_id: binId, amount_pct: 25.0 })
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(`Added +25% fill to Bin #${binId} (${data.result.new_fill_pct}%)`);
+            if (data.result.pickup_created) {
+              showToast(`Auto-dispatch created for Bin #${binId} (≥80%)`);
+            }
+            await syncSystemState();
+            return;
+          }
+        } catch (e) {
+          console.warn('Backend dump error, falling back to local simulation', e);
+        }
+      }
+
+      // Standalone Browser Simulation fallback
+      const b = (appState.bins || []).find(bin => bin.id === binId);
+      if (!b) return;
+
+      b.fill_pct = Math.min(100.0, Math.round((b.fill_pct + 25.0) * 10) / 10);
+      b.current_kg = Math.round((b.fill_pct / 100.0) * b.capacity_kg * 10) / 10;
+      showToast(`Added +25% fill to Bin #${binId} (${b.fill_pct}%)`);
+
+      if (b.fill_pct >= 80.0) {
+        const hasOpen = (appState.priority_pickups || []).some(p => p.bin_id === b.id && p.status === 'open');
+        if (!hasOpen) {
+          const now = new Date();
+          const pad = (n) => String(n).padStart(2, '0');
+          const nowStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+          appState.priority_pickups.push({
+            id: appState.next_pickup_id++,
+            bin_id: b.id,
+            tenant: b.tenant,
+            waste_type: b.waste_type,
+            fill_pct: b.fill_pct,
+            capacity_kg: b.capacity_kg,
+            current_kg: b.current_kg,
+            is_hazardous: (b.waste_type === 'solvent' || b.waste_type === 'oil') ? 1 : 0,
+            created_time: nowStr,
+            done_time: null,
+            status: 'open'
+          });
+          showToast(`Auto-dispatch created for Bin #${binId} (≥80%)`);
+        }
+      }
+
+      appState.priority_pickups.sort((a, b) => {
+        if (b.is_hazardous !== a.is_hazardous) return b.is_hazardous - a.is_hazardous;
+        return a.created_time.localeCompare(b.created_time);
+      });
+
+      appState.reuse_matches = computeLocalReuseMatches(appState);
+      saveLocalState();
+      renderAll();
+    }
+
+    // Actions: Mark Collected
+    async function completePickup(pickupId) {
+      if (isBackendAvailable) {
+        try {
+          const res = await fetch('/api/pickups/complete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pickup_id: pickupId })
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(`Pickup #${pickupId} collected (${data.result.kg_collected} kg)`);
+            await syncSystemState();
+            return;
+          }
+        } catch (e) {
+          console.warn('Backend complete error, falling back to local simulation', e);
+        }
+      }
+
+      // Standalone Browser Simulation fallback
+      const pIdx = (appState.priority_pickups || []).findIndex(p => p.id === pickupId);
+      if (pIdx === -1) return;
+
+      const p = appState.priority_pickups[pIdx];
+      const b = (appState.bins || []).find(bin => bin.id === p.bin_id);
+      const fill = b ? b.fill_pct : p.fill_pct;
+      const cap = b ? b.capacity_kg : p.capacity_kg;
+      const kgCollected = Math.round((fill / 100.0) * cap * 10) / 10;
+
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      const nowStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
+      // Reset bin to 0%
+      if (b) {
+        b.fill_pct = 0.0;
+        b.current_kg = 0.0;
+      }
+
+      // Remove from active queue
+      appState.priority_pickups.splice(pIdx, 1);
+
+      // Prepend to compliance ledger
+      appState.compliance_log.unshift({
+        id: p.id,
+        bin_id: p.bin_id,
+        tenant: p.tenant,
+        waste_type: p.waste_type,
+        is_hazardous: p.is_hazardous,
+        kg_collected: kgCollected,
+        created_time: p.created_time,
+        done_time: nowStr,
+        status: 'done'
+      });
+
+      appState.impact_metrics = computeLocalImpactMetrics(appState);
+      appState.reuse_matches = computeLocalReuseMatches(appState);
+      saveLocalState();
+      showToast(`Pickup #${pickupId} collected (${kgCollected} kg)`);
+      renderAll();
+    }
+
+    // Actions: Partial Collection / Remove Percentage
+    async function partialCollect(binId, percent = 25.0) {
+      if (isBackendAvailable) {
+        try {
+          const res = await fetch('/api/partial_collect', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ bin_id: binId, percent: percent })
+          });
+          const data = await res.json();
+          if (data.success) {
+            if (data.result.actual_removed_pct <= 0) {
+              showToast('Bin is already empty.');
+            } else {
+              showToast(`Partially collected -${data.result.actual_removed_pct}% (${data.result.collected_kg} kg) from Bin #${binId}`);
+            }
+            await syncSystemState();
+            return;
+          }
+        } catch (e) {
+          console.warn('Backend partial collect error, falling back to local simulation', e);
+        }
+      }
+
+      // Standalone Browser Simulation fallback
+      const b = (appState.bins || []).find(bin => bin.id === binId);
+      if (!b) return;
+
+      const currentFill = Number(b.fill_pct);
+      const actualRemoved = Math.min(currentFill, Number(percent));
+
+      if (actualRemoved <= 0) {
+        showToast('Bin is already empty.');
+        return;
+      }
+
+      const collectedKg = Math.round((actualRemoved / 100.0) * b.capacity_kg * 10) / 10;
+      const newFill = Math.round(Math.max(0.0, currentFill - actualRemoved) * 10) / 10;
+      b.fill_pct = newFill;
+      b.current_kg = Math.round((newFill / 100.0) * b.capacity_kg * 10) / 10;
+
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      const nowStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
+      // Check open pickups for this bin
+      const openIdx = (appState.priority_pickups || []).findIndex(p => p.bin_id === binId && p.status === 'open');
+
+      if (openIdx !== -1 && newFill < 80.0) {
+        // Auto-resolve open pickup below 80% threshold
+        const openP = appState.priority_pickups.splice(openIdx, 1)[0];
+        appState.compliance_log.unshift({
+          id: openP.id,
+          bin_id: b.id,
+          tenant: b.tenant,
+          waste_type: b.waste_type,
+          is_hazardous: (b.waste_type === 'solvent' || b.waste_type === 'oil') ? 1 : 0,
+          kg_collected: collectedKg,
+          created_time: openP.created_time,
+          done_time: nowStr,
+          status: 'done'
+        });
+      } else {
+        if (openIdx !== -1) {
+          // Still >= 80%, update open pickup's current fill & kg
+          appState.priority_pickups[openIdx].fill_pct = newFill;
+          appState.priority_pickups[openIdx].current_kg = b.current_kg;
+        }
+        // Record completed partial entry in compliance audit log
+        appState.compliance_log.unshift({
+          id: appState.next_pickup_id++,
+          bin_id: b.id,
+          tenant: b.tenant,
+          waste_type: b.waste_type,
+          is_hazardous: (b.waste_type === 'solvent' || b.waste_type === 'oil') ? 1 : 0,
+          kg_collected: collectedKg,
+          created_time: nowStr,
+          done_time: nowStr,
+          status: 'done'
+        });
+      }
+
+      appState.impact_metrics = computeLocalImpactMetrics(appState);
+      appState.reuse_matches = computeLocalReuseMatches(appState);
+      saveLocalState();
+      showToast(`Partially collected -${actualRemoved}% (${collectedKg} kg) from Bin #${binId}`);
+      renderAll();
+    }
+
+    // Actions: Toggle Simulation
+    async function toggleSimulation() {
+      if (isBackendAvailable) {
+        try {
+          const res = await fetch('/api/simulation/toggle', { method: 'POST' });
+          const data = await res.json();
+          if (data.success) {
+            appState.simulation_running = data.simulation_running;
+            renderTelemetryStatus();
+            showToast(data.message);
+            return;
+          }
+        } catch (e) {}
+      }
+
+      // Standalone mode
+      appState.simulation_running = !appState.simulation_running;
+      saveLocalState();
+      renderTelemetryStatus();
+      showToast(`Simulation is now ${appState.simulation_running ? 'ACTIVE' : 'PAUSED'}`);
+    }
+
+    // Actions: Reset Demo Seed
+    async function reseedDatabase() {
+      if (!confirm('Reset database back to initial factory demo seed?')) return;
+
+      if (isBackendAvailable) {
+        try {
+          const res = await fetch('/api/reset', { method: 'POST' });
+          const data = await res.json();
+          if (data.success) {
+            showToast('Database reset to clean seed state');
+            await syncSystemState();
+            return;
+          }
+        } catch (e) {}
+      }
+
+      // Standalone mode
+      localStorage.removeItem('loopyard-sim-state');
+      appState = getDefaultSeedState();
+      appState.reuse_matches = computeLocalReuseMatches(appState);
+      appState.impact_metrics = computeLocalImpactMetrics(appState);
+      saveLocalState();
+      showToast('Database reset to clean seed state');
+      renderAll();
+    }
+
+    // 2-Minute Demo Script Walkthrough Actions
+    async function runDemoStep(step) {
+      if (step === 1) {
+        setRoleView('all');
+        showToast('Step 1: Observing live 3s telemetry fill rates across 11 bins.');
+        document.getElementById('panelBins').scrollIntoView({ behavior: 'smooth' });
+      } else if (step === 2) {
+        const solventBin = (appState.bins || []).find(b => b.waste_type === 'solvent' && b.fill_pct < 80) || (appState.bins || []).find(b => b.waste_type === 'solvent');
+        if (solventBin) {
+          showToast(`Step 2: Adding +25% fill to solvent Bin #${solventBin.id}...`);
+          await dumpWaste(solventBin.id);
+          document.getElementById('panelQueue').scrollIntoView({ behavior: 'smooth' });
+        }
+      } else if (step === 3) {
+        setRoleView('collector');
+        showToast('Step 3: Pointing out hazardous task pinned to top of queue (P1 Hazardous).');
+        document.getElementById('panelQueue').scrollIntoView({ behavior: 'smooth' });
+      } else if (step === 4) {
+        const firstPickup = (appState.priority_pickups || [])[0];
+        if (firstPickup) {
+          showToast(`Step 4: Driver completes Pickup #${firstPickup.id}...`);
+          await completePickup(firstPickup.id);
+          setRoleView('all');
+          document.getElementById('panelCompliance').scrollIntoView({ behavior: 'smooth' });
+        } else {
+          showToast('No active pickup to complete. Dump waste into a bin first.');
+        }
+      } else if (step === 5) {
+        setRoleView('tenant');
+        showToast('Step 5: Inspecting peer-to-peer industrial symbiosis matches.');
+        document.getElementById('panelMatches').scrollIntoView({ behavior: 'smooth' });
+      } else if (step === 6) {
+        setRoleView('manager');
+        showToast('Step 6: Reviewing landfill diversion rate and CO2 metrics.');
+        document.getElementById('kpiStrip').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // Modal logic
+    function openCo2Modal() {
+      const tbody = document.getElementById('co2FactorsTableBody');
+      const factors = (appState.impact_metrics && appState.impact_metrics.co2_factors) || CO2_AVOIDANCE_FACTORS;
+      const descriptions = {
+        metal: 'Scrap reprocessing avoids high-emission virgin ore smelting',
+        plastic: 'Polymer remelting prevents hydrocarbon extraction',
+        cardboard: 'Pulp reclamation saves forestry biomass processing',
+        oil: 'Closed-loop hydrotreating replaces crude distillation',
+        solvent: 'Fractional distillation recovery avoids petrochem synthesis',
+        organic: 'Aerobic composting prevents anaerobic methane release',
+        mixed: 'Municipal landfill stream (0.0 avoidance factor)'
+      };
+
+      tbody.innerHTML = Object.entries(factors).map(([cat, factor]) => {
+        const styles = getWasteTypeStyles(cat);
+        return `
+          <tr>
+            <td><span class="material-tag ${styles.tagClass}">${cat}</span></td>
+            <td class="font-mono" style="font-weight:700; color:var(--color-teal);">${factor} kg CO₂e / kg</td>
+            <td style="color:var(--text-muted); font-size:11px;">${descriptions[cat] || 'Circular reclamation'}</td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('co2Modal').style.display = 'flex';
+    }
+
+    function closeCo2Modal() {
+      document.getElementById('co2Modal').style.display = 'none';
+    }
+
+    // ------------------------------------------------------------------
+    // Evaluator Persona Showcase & Fast Demo Sign-Up Engine
+    // ------------------------------------------------------------------
+    const DEFAULT_DEMO_USERS = [
+      { id: 1, name: "Elena Vance", role: "Park Manager", scope: "Park-Wide Administration", created_at: "Initial Seed" },
+      { id: 2, name: "Marcus Chen", role: "Collector", scope: "Truck #04 · Zones A & B Express", created_at: "Initial Seed" },
+      { id: 3, name: "Priya Sharma", role: "Tenant", scope: "AutoParts Co", created_at: "Initial Seed" }
+    ];
+
+    function initDemoUsers() {
+      const savedUserId = localStorage.getItem('loopyard-current-user-id');
+      if (savedUserId) {
+        currentUserId = parseInt(savedUserId, 10) || 1;
+      }
+
+      try {
+        const storedUsers = localStorage.getItem('loopyard-demo-users');
+        if (storedUsers) {
+          demoUsers = JSON.parse(storedUsers);
+        }
+      } catch (e) {}
+
+      if (!demoUsers || demoUsers.length === 0) {
+        demoUsers = (appState && appState.demo_users && appState.demo_users.length > 0)
+          ? [...appState.demo_users]
+          : [...DEFAULT_DEMO_USERS];
+      }
+
+      if (!demoUsers.find(u => u.id === currentUserId)) {
+        currentUserId = demoUsers[0] ? demoUsers[0].id : 1;
+      }
+
+      renderActiveUserUI();
+    }
+
+    function getCurrentUser() {
+      return (demoUsers || []).find(u => u.id === currentUserId) || demoUsers[0] || DEFAULT_DEMO_USERS[0];
+    }
+
+    function renderActiveUserUI() {
+      const user = getCurrentUser();
+      if (!user) return;
+
+      const headerInitials = document.getElementById('headerUserInitials');
+      const headerDot = document.getElementById('headerUserDot');
+      const bannerAvatar = document.getElementById('bannerAvatarChip');
+      const bannerName = document.getElementById('bannerUserName');
+      const bannerRole = document.getElementById('bannerRolePill');
+      const bannerScope = document.getElementById('bannerScopeText');
+
+      const initials = (user.name || 'Demo')
+        .split(' ')
+        .filter(Boolean)
+        .map(w => w[0].toUpperCase())
+        .slice(0, 2)
+        .join('');
+
+      if (headerInitials) headerInitials.innerText = initials;
+      if (bannerAvatar) bannerAvatar.innerText = initials;
+      if (bannerName) bannerName.innerText = user.name;
+      if (bannerScope) bannerScope.innerText = user.scope;
+
+      const rLower = (user.role || '').toLowerCase();
+      if (bannerRole) {
+        bannerRole.innerText = user.role;
+        bannerRole.className = 'persona-role-pill';
+        if (rLower.includes('manager')) {
+          bannerRole.classList.add('persona-role-manager');
+          if (headerDot) headerDot.style.background = 'var(--color-emerald)';
+        } else if (rLower.includes('collector')) {
+          bannerRole.classList.add('persona-role-collector');
+          if (headerDot) headerDot.style.background = '#ea580c';
+        } else {
+          bannerRole.classList.add('persona-role-tenant');
+          if (headerDot) headerDot.style.background = '#059669';
+        }
+      }
+
+      // Update persona quick switch pills active state
+      const qManager = document.getElementById('quickPillManager');
+      const qCollector = document.getElementById('quickPillCollector');
+      const qTenant = document.getElementById('quickPillTenant');
+      if (qManager) qManager.classList.toggle('active', rLower.includes('manager'));
+      if (qCollector) qCollector.classList.toggle('active', rLower.includes('collector'));
+      if (qTenant) qTenant.classList.toggle('active', rLower.includes('tenant'));
+    }
+
+    function switchToUser(userId, suppressToast = false) {
+      const user = (demoUsers || []).find(u => u.id === userId);
+      if (!user) return;
+
+      currentUserId = userId;
+      localStorage.setItem('loopyard-current-user-id', userId);
+
+      renderActiveUserUI();
+
+      // Adapt views based on role & scope
+      const rLower = (user.role || '').toLowerCase();
+
+      if (rLower.includes('manager')) {
+        setRoleView('manager');
+      } else if (rLower.includes('collector')) {
+        setRoleView('collector');
+      } else if (rLower.includes('tenant')) {
+        setRoleView('tenant');
+      }
+
+      closeDemoShowcaseModal();
+      if (!suppressToast) {
+        showToast(`Switched persona to ${user.name} · ${user.role} (${user.scope})`);
+      }
+    }
+
+    function openDemoShowcaseModal() {
+      renderDemoProfiles();
+      handleRoleSelectChange();
+      document.getElementById('demoShowcaseModal').style.display = 'flex';
+    }
+
+    function closeDemoShowcaseModal() {
+      document.getElementById('demoShowcaseModal').style.display = 'none';
+    }
+
+    function renderDemoProfiles() {
+      const container = document.getElementById('demoProfilesGrid');
+      const countEl = document.getElementById('demoUserCount');
+      if (!container) return;
+
+      if (countEl) countEl.innerText = demoUsers.length;
+
+      container.innerHTML = demoUsers.map(u => {
+        const isActive = u.id === currentUserId;
+        const rLower = (u.role || '').toLowerCase();
+        let roleBadgeClass = 'persona-role-manager';
+        let narrative = 'Park-wide oversight across all 6 factories, 11 smart bins, diversion metrics, and compliance audit trail.';
+
+        if (rLower.includes('collector')) {
+          roleBadgeClass = 'persona-role-collector';
+          narrative = 'Optimized collection queue with P1 hazardous overrides, direct driver dispatch, and bin emptying.';
+        } else if (rLower.includes('tenant')) {
+          roleBadgeClass = 'persona-role-tenant';
+          narrative = `Factory operator portal for ${u.scope} with real-time sensor monitoring and peer-to-peer industrial symbiosis exchange.`;
+        }
+
+        return `
+          <div class="profile-card ${isActive ? 'active-profile' : ''}">
+            <div class="profile-card-top">
+              <div>
+                <div class="profile-meta-title">${u.name}</div>
+                <div class="profile-meta-scope">📍 ${u.scope}</div>
+              </div>
+              <span class="persona-role-pill ${roleBadgeClass}">${u.role}</span>
+            </div>
+
+            <div class="profile-stats-summary">
+              ${narrative}
+            </div>
+
+            <div style="font-size:10px; color:var(--text-muted);">
+              ID: #${u.id} · Profile registered ${u.created_at || 'system seed'}
+            </div>
+
+            <button class="profile-switch-btn ${isActive ? 'btn-current' : 'btn-action-collect'}"
+              ${isActive ? 'disabled' : `onclick="switchToUser(${u.id})"`}>
+              ${isActive ? '✓ Currently Active Persona' : 'Switch to Persona →'}
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function handleRoleSelectChange() {
+      const role = document.getElementById('selectDemoRole').value;
+      const scopeSelect = document.getElementById('selectDemoScope');
+      if (!scopeSelect) return;
+
+      scopeSelect.innerHTML = '';
+      if (role === 'Tenant') {
+        const tenants = (appState && appState.tenants && appState.tenants.length > 0)
+          ? appState.tenants.map(t => t.name)
+          : ["AutoParts Co", "SteelWorks Ltd", "EcoPack Solutions", "ChemClean Refining", "GreenAgro Organics", "PolymerTech Industries"];
+        tenants.forEach(tName => {
+          const opt = document.createElement('option');
+          opt.value = tName;
+          opt.innerText = tName;
+          scopeSelect.appendChild(opt);
+        });
+      } else if (role === 'Collector') {
+        const routes = [
+          "Truck #04 · Zones A & B Express",
+          "Truck #02 · Fast Turnaround",
+          "Truck #01 · Park Express",
+          "Hazardous Transporter #08"
+        ];
+        routes.forEach(r => {
+          const opt = document.createElement('option');
+          opt.value = r;
+          opt.innerText = r;
+          scopeSelect.appendChild(opt);
+        });
+      } else {
+        const scopes = [
+          "Park-Wide Administration",
+          "Industrial Park Oversight",
+          "ESG Compliance Office"
+        ];
+        scopes.forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s;
+          opt.innerText = s;
+          scopeSelect.appendChild(opt);
+        });
+      }
+    }
+
+    function quickFillPreset(presetKey) {
+      const nameInput = document.getElementById('inputDemoName');
+      const roleSelect = document.getElementById('selectDemoRole');
+      const scopeSelect = document.getElementById('selectDemoScope');
+
+      if (presetKey === 'judge-tenant') {
+        nameInput.value = "Judge Evaluator";
+        roleSelect.value = "Tenant";
+        handleRoleSelectChange();
+        scopeSelect.value = "SteelWorks Ltd";
+      } else if (presetKey === 'judge-collector') {
+        nameInput.value = "Driver Chen";
+        roleSelect.value = "Collector";
+        handleRoleSelectChange();
+        scopeSelect.value = "Truck #04 · Zones A & B Express";
+      } else if (presetKey === 'judge-manager') {
+        nameInput.value = "Director Vance";
+        roleSelect.value = "Park Manager";
+        handleRoleSelectChange();
+        scopeSelect.value = "Park-Wide Administration";
+      } else if (presetKey === 'judge-ecopack') {
+        nameInput.value = "Dr. Green";
+        roleSelect.value = "Tenant";
+        handleRoleSelectChange();
+        scopeSelect.value = "EcoPack Solutions";
+      }
+    }
+
+    async function handleCreateDemoUser(event) {
+      event.preventDefault();
+      const name = (document.getElementById('inputDemoName').value || '').trim() || 'Demo Evaluator';
+      const role = document.getElementById('selectDemoRole').value;
+      const scope = document.getElementById('selectDemoScope').value;
+
+      if (isBackendAvailable) {
+        try {
+          const res = await fetch('/api/demo_users', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, role, scope })
+          });
+          const data = await res.json();
+          if (data.success && data.user) {
+            demoUsers = data.demo_users || [...demoUsers, data.user];
+            try {
+              localStorage.setItem('loopyard-demo-users', JSON.stringify(demoUsers));
+            } catch (e) {}
+            switchToUser(data.user.id);
+            showToast(`Created & switched to demo persona: ${name} (${role})`);
+            return;
+          }
+        } catch (e) {
+          console.warn('Backend create demo user failed, falling back to local simulation', e);
+        }
+      }
+
+      // Standalone simulation mode
+      const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 19);
+      const newUser = {
+        id: Date.now(),
+        name,
+        role,
+        scope,
+        created_at: nowStr
+      };
+
+      demoUsers.push(newUser);
+      try {
+        localStorage.setItem('loopyard-demo-users', JSON.stringify(demoUsers));
+      } catch (e) {}
+
+      if (appState) {
+        appState.demo_users = demoUsers;
+        saveLocalState();
+      }
+
+      switchToUser(newUser.id);
+      showToast(`Created & switched to demo persona: ${name} (${role})`);
+    }
+
+    // Minimal Toast
+    function showToast(msg) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast-msg font-mono';
+      toast.innerText = msg;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(4px)';
+        toast.style.transition = 'all 150ms ease';
+        setTimeout(() => toast.remove(), 150);
+      }, 2500);
+    }
+
+    // Initialization: Immediate Zero-Latency Load + Polling
+    window.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      loadLocalState(); // Immediate render with rich data (no blank screen, no 0.0 kg default)
+      initDemoUsers();
+      renderAll();
+      syncSystemState(); // Checks /api/state; if available, uses server, else continues local simulation
+      pollInterval = setInterval(syncSystemState, 3000);
+    });
+  </script>
+</body>
+</html>
